@@ -8,7 +8,7 @@ export default function RecentThreads() {
     {},
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   )
-  console.log("Recent threads:", JSON.stringify(threads))
+  // console.log("Recent threads:", JSON.stringify(threads))
   let hasMore: boolean = false
   if (threads.hasNextPage) {
     hasMore = true

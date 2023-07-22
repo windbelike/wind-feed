@@ -12,8 +12,10 @@ export default function NewThread() {
   // update input textaread height
   useEffect(() => {
     if (textAreaRef.current != null) {
-      console.log("scrollHeight:", textAreaRef.current.scrollHeight)
-      textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px"
+      const textArea = textAreaRef.current
+      // set the minimun scrollHeight
+      textArea.style.height = "10rem";
+      textArea.style.height = textArea.scrollHeight + "px"
     }
 
   }, [threadInput])
