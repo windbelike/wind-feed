@@ -52,11 +52,11 @@ function SideBar() {
 
         {user == null ?
           <li>
-            <button onClick={() => {signIn()}}>SignIn</button>
+            <button onClick={async () => {signIn()}}>SignIn</button>
           </li>
           :
           <li>
-            <button onClick={() => {signOut()}}>SignOut</button>
+            <button onClick={async () => {signOut()}}>SignOut</button>
           </li>
         }
       </ul>
