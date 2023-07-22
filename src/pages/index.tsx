@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react"
 import Image from 'next/image'
+import { ButtonHTMLAttributes, DetailedHTMLProps } from "react"
 
 export default function Home() {
   return (
