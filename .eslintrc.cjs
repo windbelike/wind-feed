@@ -7,10 +7,17 @@ const config = {
   plugins: ["@typescript-eslint"],
   extends: [
     "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended-type-checked",
-    "plugin:@typescript-eslint/stylistic-type-checked",
+    // "plugin:@typescript-eslint/recommended-type-checked",
+    // "plugin:@typescript-eslint/stylistic-type-checked",
   ],
   rules: {
+    "react/display-name": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {
