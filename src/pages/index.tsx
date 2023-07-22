@@ -27,7 +27,7 @@ function NewThread() {
   return (
     <div className="flex flex-col px-4 py-2 border-b">
       <div className="flex gap-4 h-40">
-        <ProfileImg src={session.data.user.image}/>
+        <ProfileImg src={session.data.user.image!}/>
         <textarea className="flex-grow bg-gray-50 outline-none resize-none
       overflow-hidden text-lg p-4
       " placeholder="What's happening?" />
