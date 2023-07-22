@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react"
 import Image from 'next/image'
 import { ButtonHTMLAttributes, DetailedHTMLProps, FormEvent, useEffect, useRef, useState } from "react"
 import { api } from "~/utils/api"
+import ProfileImg from "./ProfileImg"
 
 export default function NewThread() {
 
