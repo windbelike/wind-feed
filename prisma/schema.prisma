@@ -27,6 +27,7 @@ model Thread {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@index([userId])
+    @@unique([createdAt, id])
 }
 
 model Like {

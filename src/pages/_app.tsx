@@ -32,10 +32,9 @@ export default api.withTRPC(MyApp);
 function SideBar() {
   const session = useSession()
   const user = session.data?.user
-  console.log('SideBar user:', user)
 
   return (
-    <nav className="px-2 py-4">
+    <nav className="px-3 py-6">
       <ul className="flex flex-col gap-2">
         <li>
           <Link href="/">
@@ -52,11 +51,11 @@ function SideBar() {
 
         {user == null ?
           <li>
-            <button onClick={() => {void signIn()}}>SignIn</button>
+            <button onClick={() => { void signIn() }}>Sign In</button>
           </li>
           :
           <li>
-            <button onClick={() => {void signOut()}}>SignOut</button>
+            <button onClick={() => { void signOut() }}>Sign Out</button>
           </li>
         }
       </ul>
