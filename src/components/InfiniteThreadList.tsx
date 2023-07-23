@@ -65,9 +65,44 @@ function ThreadCard({
   likeCount
 }
   : Thread) {
-  const toggleLike = api.thread.toggleLike.useMutation()
+  const trpcUtils = api.useContext();
+  const toggleLike = api.thread.toggleLike.useMutation({
+    onSuccess: async (data) => {
+
+      const updateData = {}
+      // mutate the updated date in cache 
+      trpcUtils.thread.infiniteFeed.setInfiniteData({}, (oldData) => {
+        if (oldData == null) {
+          return
+        }
+        const countModifier = data.addedLike ? 1 : -1;
+        console.log("oldData:", oldData)
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map(page => {
+            return {
+              ...page,
+              threads:
+                page.threads.map(thread => {
+                  if (thread.id == id) {
+                    return {
+                      ...thread,
+                      likeCount: thread.likeCount + countModifier,
+                      likedByMe: data.addedLike
+                    }
+                  }
+
+                  return thread
+                })
+            }
+          })
+        }
+      });
+    }
+  })
   function handleToggleLike() {
-    toggleLike.mutate({id})
+    toggleLike.mutate({ id })
   }
 
   return (

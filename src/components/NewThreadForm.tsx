@@ -21,11 +21,42 @@ export default function NewThread() {
   }, [threadInput])
 
 
+  const trpcUtils = api.useContext()
   const createThread = api.thread.create.useMutation({
     onSuccess: newThread => {
-      console.log(JSON.stringify(newThread))
-      console.log("set input to empty")
-      textAreaRef.current!.value = ""
+      setThreadInput("")
+
+      if (session.data == null) {
+        return
+      }
+
+      trpcUtils.thread.infiniteFeed.setInfiniteData({}, oldData => {
+        if (oldData == null || oldData.pages[0] == null) { return }
+
+        const thread2Insert = {
+          ...newThread,
+          likeCount: 0,
+          likedByMe: false,
+          user: {
+            id: session.data.user.id,
+            name: session.data.user.name || null,
+            image: session.data.user.image || null,
+          }
+        }
+        console.log("thread2Insert:", JSON.stringify(thread2Insert))
+        console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
+
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              threads: [thread2Insert, ...oldData.pages[0]!.threads],
+            },
+            ...oldData.pages.slice(1)
+          ]
+        }
+      })
     }
   })
 
@@ -42,7 +73,7 @@ export default function NewThread() {
     <form onSubmit={handleSubmit} className="flex flex-col px-4 py-2 border-b">
       <div className="flex gap-4">
         <ProfileImg src={session.data.user.image!} />
-        <textarea ref={textAreaRef} onChange={(e) => setThreadInput(e.target.value)}
+        <textarea value={threadInput} ref={textAreaRef} onChange={(e) => setThreadInput(e.target.value)}
           className="flex-grow bg-gray-50 outline-none resize-none
           rounded-lg h-40
           max-h-96 overflow-y-auto

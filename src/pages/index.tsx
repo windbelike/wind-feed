@@ -18,7 +18,7 @@ export default function Home() {
 }
 
 function RecentThreads() {
-  const threads = api.thread.infiniteThread.useInfiniteQuery(
+  const threads = api.thread.infiniteFeed.useInfiniteQuery(
     {},
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   )

@@ -6,7 +6,7 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
-  infiniteThread: publicProcedure.input(
+  infiniteFeed: publicProcedure.input(
     z.object({
       limit: z.number().optional(),
       cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
@@ -74,12 +74,12 @@ export const threadRouter = createTRPCRouter({
       })
       if (existingLike == null) {
         await opt.ctx.prisma.like.create({ data })
-        return { addLike: true }
+        return { addedLike: true }
       } else {
         await opt.ctx.prisma.like.delete({
           where: { threadId_userId: data }
         })
-        return { addLike: false }
+        return { addedLike: false }
       }
     })
 });
