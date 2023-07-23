@@ -65,4 +65,21 @@ export const threadRouter = createTRPCRouter({
 
       return createThreadResult
     }),
+  toggleLike: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async (opt) => {
+      const data = { threadId: opt.input.id, userId: opt.ctx.session.user.id }
+      const existingLike = await opt.ctx.prisma.like.findUnique({
+        where: { threadId_userId: data }
+      })
+      if (existingLike == null) {
+        await opt.ctx.prisma.like.create({ data })
+        return { addLike: true }
+      } else {
+        await opt.ctx.prisma.like.delete({
+          where: { threadId_userId: data }
+        })
+        return { addLike: false }
+      }
+    })
 });

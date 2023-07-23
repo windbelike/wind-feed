@@ -1,6 +1,6 @@
+import InfiniteThreadList from "~/components/InfiniteThreadList";
 import NewThreadForm from "~/components/NewThreadForm";
-import RecentThreads from "~/components/RecentThreads";
-
+import { api } from "~/utils/api";
 
 export default function Home() {
   return (
@@ -15,4 +15,24 @@ export default function Home() {
       <RecentThreads />
     </>
   )
+}
+
+function RecentThreads() {
+  const threads = api.thread.infiniteThread.useInfiniteQuery(
+    {},
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  )
+  // console.log("Recent threads:", JSON.stringify(threads))
+  let hasMore: boolean = false
+  if (threads.hasNextPage) {
+    hasMore = true
+  }
+
+  return <InfiniteThreadList
+    threads={threads.data?.pages.flatMap(page => page.threads)}
+    isError={threads.isError}
+    isLoading={threads.isLoading}
+    hasMore={hasMore}
+    fetchNewThreads={threads.fetchNextPage}
+  />
 }
