@@ -30,7 +30,7 @@ export const profileRouter = createTRPCRouter({
         return
       }
 
-      const isFollowing = profile.followers[0]?.id == currentUserId
+      // const isFollowing = profile.followers[0]?.id == currentUserId
 
       return {
         name: profile.name,
@@ -38,7 +38,7 @@ export const profileRouter = createTRPCRouter({
         followersCount: profile._count.followers,
         followsCount: profile._count.follows,
         tweetsCount: profile._count.threads,
-        isFollowing: isFollowing
+        isFollowing: profile.followers?.length > 0,
       };
     })
 });
