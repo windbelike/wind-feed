@@ -58,7 +58,7 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
         <ProfileImg src={data.image} className="flex-shrink-0" />
         <div className="ml-2 flex-grow">
           <h1 className="font-bold text-lg">{data.name}</h1>
-          <div className="text-gray-500 text-sm flex gap-3">
+          <div className="text-gray-500 text-sm flex gap-1">
             <span className="hover:underline focus-visible:underline">{data.threadsCount} Threads</span>
             <span className="hover:underline focus-visible:underline">{data.followsCount} Following</span>
             <span className="hover:underline focus-visible:underline">{data.followersCount} Follower</span>
