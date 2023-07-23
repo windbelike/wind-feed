@@ -8,8 +8,7 @@ export default function SideBar() {
   const user = session.data?.user
 
   return (
-    <nav className="px-3 py-6">
-
+    <nav className="px-1 py-6">
       <ul className="sticky top-0 flex flex-col gap-2">
         <li>
           <Link href="/">
