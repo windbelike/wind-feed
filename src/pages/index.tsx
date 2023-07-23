@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import InfiniteThreadList from "~/components/InfiniteThreadList";
 import NewThreadForm from "~/components/NewThreadForm";
@@ -7,6 +8,7 @@ const tabList = ['Recent', 'Following']
 
 export default function Home() {
   const [currTab, setCurrTab] = useState('Recent')
+  const session = useSession()
 
   return (
     <>
@@ -14,28 +16,30 @@ export default function Home() {
         <h1 className="mb-2 px-4 font-bold text-lg ">
           Home
         </h1>
-        <div className="flex ">
-          {tabList.map(t => {
-            return <button onClick={() => setCurrTab(t)} key={t} className={`flex-grow p-2
+        {session.status == "authenticated" &&
+          <div className="flex ">
+            {tabList.map(t => {
+              return <button onClick={() => setCurrTab(t)} key={t} className={`flex-grow p-2
             hover:bg-gray-200 focus-visible:bg-gray-200
             ${currTab == t
-                ? 'border-b-4 border-blue-500 font-bold'
-                : ''
-              } 
+                  ? 'border-b-4 border-blue-500 font-bold'
+                  : ''
+                } 
             `}>{t}</button>
-          })}
-        </div>
+            })}
+          </div>
+        }
       </header>
 
       <NewThreadForm />
-      { currTab == "Recent" ? <RecentThreads /> : <FollowingThreads />}
+      {currTab == "Recent" ? <RecentThreads /> : <FollowingThreads />}
     </>
   )
 }
 
 function FollowingThreads() {
   const threads = api.thread.infiniteFeed.useInfiniteQuery(
-    {onlyFollowing: true},
+    { onlyFollowing: true },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   )
 
