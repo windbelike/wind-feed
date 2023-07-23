@@ -58,6 +58,9 @@ export const threadRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ content: z.string() }))
     .mutation(async ({ input: { content }, ctx }) => {
+      // if (content == "") {
+      //   return
+      // }
       const createThreadResult = await ctx.prisma.thread.create({
         data: {
           content,

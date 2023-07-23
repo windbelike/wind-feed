@@ -68,6 +68,9 @@ export default function NewThread() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (threadInput == "") {
+      return
+    }
     createThread.mutate({ content: threadInput })
   }
 
