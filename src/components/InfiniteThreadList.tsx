@@ -69,8 +69,10 @@ function ThreadCard({
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
-      // mutate the updated date in cache 
-      trpcUtils.thread.infiniteFeed.setInfiniteData({}, (oldData) => {
+      // mutate the updated liked thread data in cache 
+      const updateDataFn: Parameters<
+        typeof trpcUtils.thread.infiniteFeed.setInfiniteData
+      >[1] = (oldData) => {
         if (oldData == null) {
           return
         }
@@ -97,7 +99,20 @@ function ThreadCard({
             }
           })
         }
-      });
+      }
+
+      // update home page recent feed
+      trpcUtils.thread.infiniteFeed.setInfiniteData({}, updateDataFn);
+      // update home page following feed
+      trpcUtils.thread.infiniteFeed.setInfiniteData(
+        { onlyFollowing: true },
+        updateDataFn
+      );
+      // update profile feed
+      trpcUtils.thread.infiniteProfileFeed.setInfiniteData(
+        { userId: user.id },
+        updateDataFn
+      );
     }
   })
   function handleToggleLike() {

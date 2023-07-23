@@ -10,6 +10,28 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
+  infiniteProfileFeed: publicProcedure.input(
+    z.object(
+      {
+        userId: z.string(),
+        limit: z.number().optional(),
+        cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+      }
+    )
+  ).query(async (opt) => {
+    const ctx = opt.ctx
+    const { userId, limit = 10, cursor } = opt.input
+    // find thread for certain profile
+    return await getInfiniteThreads({
+      ctx,
+      limit,
+      cursor,
+      whereClause: {
+        userId
+      }
+    })
+  })
+  ,
   infiniteFeed: publicProcedure.input(
     z.object({
       onlyFollowing: z.boolean().optional(),
