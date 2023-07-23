@@ -19,12 +19,13 @@ export default function Home() {
         {session.status == "authenticated" &&
           <div className="flex ">
             {tabList.map(t => {
-              return <button onClick={() => setCurrTab(t)} key={t} className={`flex-grow p-2
+              return <button onClick={() => setCurrTab(t)} key={t}
+                className={`flex-grow p-2
             hover:bg-gray-200 focus-visible:bg-gray-200
             ${currTab == t
-                  ? 'border-b-4 border-blue-500 font-bold'
-                  : ''
-                } 
+                    ? 'border-b-4 border-blue-500 font-bold'
+                    : ''
+                  } 
             `}>{t}</button>
             })}
           </div>
