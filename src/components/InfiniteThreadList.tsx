@@ -5,6 +5,7 @@ import ProfileImg from "./ProfileImg"
 import { useSession } from "next-auth/react"
 import { VscHeartFilled, VscHeart } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
+import LoadingSpinner from "./LoadingSpinner"
 
 type Thread = {
   id: string
@@ -31,13 +32,13 @@ export default function InfiniteThreadList({
   fetchNewThreads,
 }: InfiniteThreadListProps) {
   if (isLoading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner />
   }
   if (isError) {
     return <div>Error...</div>
   }
   if (threads == null || threads.length == 0) {
-    return <div>No threads</div>
+    return <div className="flex justify-center text-xl text-gray-300 mt-4">No Threads</div>
   }
 
   return <ul>
@@ -68,8 +69,6 @@ function ThreadCard({
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
-
-      const updateData = {}
       // mutate the updated date in cache 
       trpcUtils.thread.infiniteFeed.setInfiniteData({}, (oldData) => {
         if (oldData == null) {

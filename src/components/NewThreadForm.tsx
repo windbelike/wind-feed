@@ -30,6 +30,7 @@ export default function NewThread() {
         return
       }
 
+      // insert the thread just sent at the very first begining of all threads in cache
       trpcUtils.thread.infiniteFeed.setInfiniteData({}, oldData => {
         if (oldData == null || oldData.pages[0] == null) { return }
 
