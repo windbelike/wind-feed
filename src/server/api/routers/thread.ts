@@ -106,7 +106,7 @@ async function getInfiniteThreads({
     take: limit + 1,
     cursor: cursor ? { createdAt_id: cursor } : undefined,
     where: whereClause,
-    orderBy: [{ id: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: {
       id: true,
       content: true,
