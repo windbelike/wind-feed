@@ -4,7 +4,12 @@ import { api } from "~/utils/api"
 import ProfileImg from "./ProfileImg"
 import { Button } from "./Button"
 
-export default function NewThread() {
+export type NewThreadFormProps = {
+  isReply?: boolean
+  replyThreadId?: string
+}
+
+export default function NewThreadForm({ isReply = false, replyThreadId }: NewThreadFormProps) {
 
   const session = useSession()
   const [threadInput, setThreadInput] = useState("")
@@ -21,7 +26,11 @@ export default function NewThread() {
 
   }, [threadInput])
 
+  // reply thread
+  // todo update feeds after a reply
+  const replyThread = api.thread.replyThread.useMutation()
 
+  // new thread
   const trpcUtils = api.useContext()
   const createThread = api.thread.create.useMutation({
     onSuccess: newThread => {
@@ -71,7 +80,11 @@ export default function NewThread() {
     if (threadInput == "") {
       return
     }
-    createThread.mutate({ content: threadInput })
+    if (isReply) {
+      replyThread.mutate({content: threadInput, threadId: replyThreadId!})
+    } else {
+      createThread.mutate({ content: threadInput })
+    }
   }
 
   return (
@@ -85,7 +98,7 @@ export default function NewThread() {
       overflow-hidden text-lg p-4
       " placeholder="What's happening?" />
       </div>
-      <Button className="self-end my-2">New Thread</Button>
+      <Button className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
     </form>
   )
 }

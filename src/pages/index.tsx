@@ -31,9 +31,10 @@ export default function Home() {
           </div>
         }
       </header>
-
-      <NewThreadForm />
-      {currTab == "Recent" ? <RecentThreads /> : <FollowingThreads />}
+      <main>
+        <NewThreadForm />
+        {currTab == "Recent" ? <RecentThreads /> : <FollowingThreads />}
+      </main>
     </>
   )
 }

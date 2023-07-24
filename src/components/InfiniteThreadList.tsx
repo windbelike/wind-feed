@@ -6,10 +6,8 @@ import { useSession } from "next-auth/react"
 import { VscHeartFilled, VscHeart } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
-import { useRouter } from "next/router"
-import { ReactNode } from "react"
 
-type Thread = {
+export type ThreadProps = {
   id: string
   content: string
   createdAt: Date
@@ -23,7 +21,7 @@ export type InfiniteThreadListProps = {
   isError: boolean
   hasMore: boolean
   fetchNewThreads: () => Promise<unknown>
-  threads: Thread[] | undefined
+  threads: ThreadProps[] | undefined
 }
 
 export default function InfiniteThreadList({
@@ -57,7 +55,7 @@ export default function InfiniteThreadList({
   </ul>
 }
 
-const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "short" })
+export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "short" })
 
 function ThreadCard({
   id,
@@ -67,7 +65,7 @@ function ThreadCard({
   likedByMe,
   likeCount
 }
-  : Thread) {
+  : ThreadProps) {
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
@@ -121,6 +119,7 @@ function ThreadCard({
     toggleLike.mutate({ id })
   }
 
+// todo click the blank, jump to thread detail
   return (
     <li className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
@@ -155,7 +154,7 @@ type HeartButtonProps = {
   likeCount: number
 }
 
-function HeartButton({ likedByMe, likeCount, onClick, isLoading }: HeartButtonProps) {
+export function HeartButton({ likedByMe, likeCount, onClick, isLoading }: HeartButtonProps) {
   const session = useSession()
   const HeartIcon = likedByMe ? VscHeartFilled : VscHeart
 

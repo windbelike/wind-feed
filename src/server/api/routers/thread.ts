@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { inferAsyncReturnType } from "@trpc/server";
+import { threadId } from "worker_threads";
 import { z } from "zod";
 
 import {
@@ -10,7 +11,52 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
+  infiniteReplyThread: publicProcedure.input(
+    z.object({
+      threadId: z.string(),
+      limit: z.number().optional(),
+      cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+    })
+  ).query(async opt => {
+    const ctx = opt.ctx
+    const { limit = 10, cursor, threadId } = opt.input
+    // find thread for certain profile
+    return await getInfiniteThreads({
+      ctx,
+      limit,
+      cursor,
+      whereClause: {
+        parentThreadId: threadId
+      }
+    })
+  }),
+  replyThread: protectedProcedure.input(
+    z.object({
+      threadId: z.string(),
+      content: z.string(),
+    })
+  ).mutation(async opt => {
+    const ctx = opt.ctx
+    const { threadId, content } = opt.input
+    if (content.trim() == '') {
+      return
+    }
+
+    const replyResult = ctx.prisma.thread.create({
+      data: {
+        content,
+        userId: ctx.session.user.id,
+        parentThreadId: threadId
+        // parentThread: { connect: { id: threadId } },
+      }
+    })
+
+    console.log("replyResult:", JSON.stringify(replyResult))
+
+    return replyResult
+  }),
   // infinite query which can happen in the middle
+  // todo: split this query into 3 individual queries
   threadDetail: publicProcedure.input(
     z.object({
       threadId: z.string(),
@@ -20,6 +66,7 @@ export const threadRouter = createTRPCRouter({
   ).query(async (opt) => {
     const ctx = opt.ctx
     const { limit = 10, cursor, threadId } = opt.input
+    const currUserId = ctx.session?.user.id
     // todo 1. cache design: After writing a thread to db, write it to the cache as well
     // todo 2. paging
 
@@ -35,16 +82,40 @@ export const threadRouter = createTRPCRouter({
       }
     })
 
-    const thread = await ctx.prisma.thread.findMany({
+    const thread = await ctx.prisma.thread.findFirst({
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        _count: { select: { likes: true } },
+        // likes by myself
+        likes: currUserId == null
+          ? false
+          : { where: { userId: currUserId } },
+        user: {
+          select: { name: true, id: true, image: true }
+        }
+      },
       where: {
         id: threadId
       }
     })
 
+    if (thread == null) {
+      return
+    }
+
     const result = {
       threadParents: parents,
       threadChilren: children,
-      thread
+      thread: {
+        id: thread.id,
+        content: thread.content,
+        createdAt: thread.createdAt,
+        likeCount: thread._count.likes,
+        user: thread.user,
+        likedByMe: thread.likes?.length > 0
+      }
     }
 
     return result
