@@ -10,6 +10,45 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
+  // infinite query which can happen in the middle
+  threadDetail: publicProcedure.input(
+    z.object({
+      threadId: z.string(),
+      limit: z.number().optional(),
+      cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+    })
+  ).query(async (opt) => {
+    const ctx = opt.ctx
+    const { limit = 10, cursor, threadId } = opt.input
+    // todo 1. cache design: After writing a thread to db, write it to the cache as well
+    // todo 2. paging
+
+    const children = await ctx.prisma.thread.findMany({
+      where: {
+        parentThreadId: threadId
+      }
+    })
+
+    const parents = await ctx.prisma.thread.findMany({
+      where: {
+        childrenThread: { some: { id: threadId } }
+      }
+    })
+
+    const thread = await ctx.prisma.thread.findMany({
+      where: {
+        id: threadId
+      }
+    })
+
+    const result = {
+      threadParents: parents,
+      threadChilren: children,
+      thread
+    }
+
+    return result
+  }),
   infiniteProfileFeed: publicProcedure.input(
     z.object(
       {

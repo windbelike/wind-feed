@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react"
 import { VscHeartFilled, VscHeart } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
+import { useRouter } from "next/router"
+import { ReactNode } from "react"
 
 type Thread = {
   id: string
@@ -120,21 +122,26 @@ function ThreadCard({
   }
 
   return (
-    <li className="flex gap-4 border-b px-4 py-2">
+    <li className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
+        focus-visible:bg-gray-200 cursor-pointer
+        duration-200
+        ">
       <Link href={`/profile/${user.id}`}>
         <ProfileImg src={user.image} />
       </Link>
       <div>
-        <div className="flex flex-grow gap-2">
+        <div className="flex flex-grow gap-2 ">
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
           <span className="text-gray-500">-</span>
           <span className="text-gray-500">{dateTimeFormatter.format(createdAt)}</span>
         </div>
-        <p className="whitespace-pre-wrap">
-          {content}
-        </p>
+        <Link href={`/thread/${id}`}>
+          <p className="whitespace-pre-wrap">
+            {content}
+          </p>
+        </Link>
         <HeartButton onClick={handleToggleLike} isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
       </div>
     </li>
