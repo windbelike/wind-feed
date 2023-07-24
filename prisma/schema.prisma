@@ -25,8 +25,13 @@ model Thread {
     likes     Like[]
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    // one-to-many self relation
+    parentThreadId String?
+    parentThread Thread? @relation("ParentThread", fields: [parentThreadId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    childrenThread Thread[] @relation("ParentThread")
 
     @@index([userId])
+    @@index([parentThreadId])
     @@unique([createdAt, id])
 }
 
@@ -85,7 +90,7 @@ model User {
     threads Thread[]
     likes   Like[]
 
-    // one-to-many self relation (implicit creating a middle relation table named _Followers)
+    // many-to-many self relation (implicit creating a middle relation table named _Followers)
     followers User[] @relation(name: "Followers")
     follows   User[] @relation(name: "Followers")
 }

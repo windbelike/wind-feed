@@ -15,7 +15,7 @@ export default function NewThread() {
     if (textAreaRef.current != null) {
       const textArea = textAreaRef.current
       // set the minimun scrollHeight
-      textArea.style.height = "10rem";
+      textArea.style.height = "6rem";
       textArea.style.height = textArea.scrollHeight + "px"
     }
 
@@ -80,7 +80,7 @@ export default function NewThread() {
         <ProfileImg src={session.data.user.image!} />
         <textarea value={threadInput} ref={textAreaRef} onChange={(e) => setThreadInput(e.target.value)}
           className="flex-grow bg-gray-50 outline-none resize-none
-          rounded-lg h-40
+          rounded-lg h-24
           max-h-96 overflow-y-auto
       overflow-hidden text-lg p-4
       " placeholder="What's happening?" />
