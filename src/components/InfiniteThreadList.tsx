@@ -52,7 +52,7 @@ export default function InfiniteThreadList({
       loader={"loading..."}
     >
       {threads.map(thread => {
-        return <ThreadCard key={thread.id} {...thread} />;
+        return <ThreadCard key={thread.id} {...thread} parentThreadId={parentThreadId} />;
       })}
     </InfiniteScroll>
   </ul>
