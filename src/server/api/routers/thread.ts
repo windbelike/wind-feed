@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import { inferAsyncReturnType } from "@trpc/server";
-import { threadId } from "worker_threads";
 import { z } from "zod";
 
 import {
@@ -11,7 +10,7 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
-  infiniteReplyThread: publicProcedure.input(
+  infiniteReplyFeed: publicProcedure.input(
     z.object({
       threadId: z.string(),
       limit: z.number().optional(),

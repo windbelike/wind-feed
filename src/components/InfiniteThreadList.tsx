@@ -14,6 +14,7 @@ export type ThreadProps = {
   likeCount: number
   likedByMe: boolean
   user: { id: string, image: string | null, name: string | null }
+  parentThreadId?: string
 }
 
 export type InfiniteThreadListProps = {
@@ -22,6 +23,7 @@ export type InfiniteThreadListProps = {
   hasMore: boolean
   fetchNewThreads: () => Promise<unknown>
   threads: ThreadProps[] | undefined
+  parentThreadId?: string
 }
 
 export default function InfiniteThreadList({
@@ -30,6 +32,7 @@ export default function InfiniteThreadList({
   isError,
   hasMore,
   fetchNewThreads,
+  parentThreadId
 }: InfiniteThreadListProps) {
   if (isLoading) {
     return <LoadingSpinner />
@@ -63,7 +66,8 @@ function ThreadCard({
   user,
   createdAt,
   likedByMe,
-  likeCount
+  likeCount,
+  parentThreadId
 }
   : ThreadProps) {
   const trpcUtils = api.useContext();
@@ -73,11 +77,11 @@ function ThreadCard({
       const updateDataFn: Parameters<
         typeof trpcUtils.thread.infiniteFeed.setInfiniteData
       >[1] = (oldData) => {
+        console.log("oldData:", oldData)
         if (oldData == null) {
           return
         }
         const countModifier = data.addedLike ? 1 : -1;
-        console.log("oldData:", oldData)
 
         return {
           ...oldData,
@@ -113,13 +117,22 @@ function ThreadCard({
         { userId: user.id },
         updateDataFn
       );
+      // console.log("update reply feed")
+      // update thread detail reply feed
+      if (parentThreadId == null) {
+        return
+      }
+      trpcUtils.thread.infiniteReplyFeed.setInfiniteData(
+        { threadId: parentThreadId },
+        updateDataFn
+      )
     }
   })
   function handleToggleLike() {
     toggleLike.mutate({ id })
   }
 
-// todo click the blank, jump to thread detail
+  // todo click the blank, jump to thread detail
   return (
     <li className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer

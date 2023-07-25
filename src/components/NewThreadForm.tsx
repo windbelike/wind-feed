@@ -23,29 +23,28 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
       textArea.style.height = "6rem";
       textArea.style.height = textArea.scrollHeight + "px"
     }
-
   }, [threadInput])
 
   // reply thread
   // todo update feeds after a reply
-  const replyThread = api.thread.replyThread.useMutation()
-
-  // new thread
-  const trpcUtils = api.useContext()
-  const createThread = api.thread.create.useMutation({
-    onSuccess: newThread => {
+  const replyThread = api.thread.replyThread.useMutation({
+    onSuccess: newReply => {
       setThreadInput("")
 
       if (session.data == null) {
         return
       }
 
-      // insert the thread just sent at the very first begining of all threads in cache
-      trpcUtils.thread.infiniteFeed.setInfiniteData({}, oldData => {
-        if (oldData == null || oldData.pages[0] == null) { return }
+      if (newReply == null) {
+        return
+      }
 
+      trpcUtils.thread.infiniteReplyFeed.setInfiniteData({threadId: replyThreadId!}, (oldData) => {
+        if (oldData == null || oldData.pages[0] == null) {
+          return
+        }
         const thread2Insert = {
-          ...newThread,
+          ...newReply,
           likeCount: 0,
           likedByMe: false,
           user: {
@@ -71,6 +70,54 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
     }
   })
 
+  // new thread
+  const trpcUtils = api.useContext()
+  const createThread = api.thread.create.useMutation({
+    onSuccess: newThread => {
+      setThreadInput("")
+
+      if (session.data == null) {
+        return
+      }
+
+      const updateDataFn: Parameters<
+        typeof trpcUtils.thread.infiniteFeed.setInfiniteData
+      >[1] = (oldData) => {
+        if (oldData == null || oldData.pages[0] == null) {
+          return
+        }
+        const thread2Insert = {
+          ...newThread,
+          likeCount: 0,
+          likedByMe: false,
+          user: {
+            id: session.data.user.id,
+            name: session.data.user.name || null,
+            image: session.data.user.image || null,
+          }
+        }
+        console.log("thread2Insert:", JSON.stringify(thread2Insert))
+        console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
+
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              threads: [thread2Insert, ...oldData.pages[0]!.threads],
+            },
+            ...oldData.pages.slice(1)
+          ]
+        }
+
+      }
+
+      // insert the thread just sent at the very first begining of all threads in cache
+      // update home feed
+      trpcUtils.thread.infiniteFeed.setInfiniteData({}, updateDataFn)
+    }
+  })
+
   if (session.status != "authenticated") {
     return
   }
@@ -81,11 +128,13 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
       return
     }
     if (isReply) {
-      replyThread.mutate({content: threadInput, threadId: replyThreadId!})
+      replyThread.mutate({ content: threadInput, threadId: replyThreadId! })
     } else {
       createThread.mutate({ content: threadInput })
     }
   }
+
+  const buttonDisabled = replyThread.isLoading || createThread.isLoading
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col px-4 py-2 border-b">
@@ -98,7 +147,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
       overflow-hidden text-lg p-4
       " placeholder="What's happening?" />
       </div>
-      <Button className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
+      <Button disabled={buttonDisabled} className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
     </form>
   )
 }

@@ -17,7 +17,7 @@ export default function() {
     { threadId }, { enabled: ready }
   )
 
-  const infiniteReplyThreads = api.thread.infiniteReplyThread.useInfiniteQuery(
+  const infiniteReplyThreads = api.thread.infiniteReplyFeed.useInfiniteQuery(
     { threadId: threadId },
     { getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: ready },
   )
@@ -35,7 +35,7 @@ export default function() {
     return <LoadingSpinner />
   }
 
-  console.log("thread detail:", JSON.stringify(data))
+  // console.log("thread detail:", JSON.stringify(data))
 
   return (
     <>
@@ -59,6 +59,7 @@ export default function() {
           isLoading={infiniteReplyThreads.isLoading}
           hasMore={infiniteReplyThreads.hasNextPage || false}
           fetchNewThreads={infiniteReplyThreads.fetchNextPage}
+          parentThreadId={threadId}
         />
       </main>
     </>
