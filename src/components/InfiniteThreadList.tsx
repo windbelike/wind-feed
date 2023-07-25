@@ -197,13 +197,16 @@ function ThreadCard({
 
   // todo click the blank, jump to thread detail
   return (
-    <li id="threadCardId" onClick={handleClickThread} className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
+    <li id="threadCardId" onClick={handleClickThread} className={`flex gap-4
+    ${childThreadId == null ? 'border-b' : ''} px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
-        duration-200
-        ">
-      <Link href={`/profile/${user.id}`}>
-        <ProfileImg src={user.image} />
-      </Link>
+        duration-200`}>
+      <div className="flex flex-col items-center">
+        <Link href={`/profile/${user.id}`}>
+          <ProfileImg src={user.image} />
+        </Link>
+        <p className="text-2xl">|</p>
+      </div>
       <div>
         <div className="flex flex-grow gap-2 ">
           <Link href={`/profile/${user.id}`} className="

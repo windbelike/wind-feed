@@ -43,6 +43,7 @@ export default function() {
   }
 
   // todo scroll to main thread
+  // todo reply count
   if (infiniteParentFeed.data != null && mainThreadRef.current != null) {
     // scroll to main thread
     // window.scrollToHeight(mainThreadRef.current.scrollHeight)
