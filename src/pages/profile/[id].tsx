@@ -11,10 +11,11 @@ import ProfileImg from "~/components/ProfileImg";
 import InfiniteThreadList from "~/components/InfiniteThreadList";
 import { useSession } from "next-auth/react";
 import { Button } from "~/components/Button";
+import { router } from "@trpc/server";
 
 export default function(props: InferGetServerSidePropsType<typeof getStaticProps>) {
   const { id } = props
-  // const router = useRouter()
+  const router = useRouter()
 
   // todo invalidate ssg
   // use second param to not fetch again, use the ssg data only
@@ -50,11 +51,11 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
       </Head>
       <header className="sticky top-0 flex items-center border-b bg-white
       z-10 px-4 py-2">
-        <Link href=".." className="mr-2">
+        <div onClick={() => router.back()} className="mr-2">
           <IconHoverEffect>
             <VscArrowLeft className="w-6 h-6" />
           </IconHoverEffect>
-        </Link>
+        </div>
         <ProfileImg src={data.image} className="flex-shrink-0" />
         <div className="ml-2 flex-grow">
           <h1 className="font-bold text-lg">{data.name}</h1>

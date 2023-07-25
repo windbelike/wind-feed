@@ -1,6 +1,7 @@
 import { read } from "fs"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { useRef } from "react"
 import { VscArrowLeft } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
 import InfiniteThreadList, { HeartButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
@@ -13,11 +14,17 @@ export default function() {
   const router = useRouter()
   let threadId = router.query.id as string
   let ready = router.isReady
+  const mainThreadRef = useRef<HTMLDivElement>(null)
   const { data, isLoading, isError } = api.thread.threadDetail.useQuery(
     { threadId }, { enabled: ready }
   )
 
   const infiniteReplyThreads = api.thread.infiniteReplyFeed.useInfiniteQuery(
+    { threadId: threadId },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: ready },
+  )
+
+  const infiniteParentFeed = api.thread.infiniteParentFeed.useInfiniteQuery(
     { threadId: threadId },
     { getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: ready },
   )
@@ -35,24 +42,39 @@ export default function() {
     return <LoadingSpinner />
   }
 
-  // console.log("thread detail:", JSON.stringify(data))
+  // todo scroll to main thread
+  if (infiniteParentFeed.data != null && mainThreadRef.current != null) {
+    // scroll to main thread
+    // window.scrollToHeight(mainThreadRef.current.scrollHeight)
+    mainThreadRef.current.scrollTop = 0
+  }
 
   return (
     <>
       <header className="sticky top-0 flex items-center border-b bg-white z-10
       px-4 py-2">
-        <Link href=".." className="mr-2">
+        <div onClick={() => router.back()} className="mr-2">
           <IconHoverEffect>
             <VscArrowLeft className="w-6 h-6" />
           </IconHoverEffect>
-        </Link>
+        </div>
         <h1 className="px-2 font-bold text-lg ">
           Thread
         </h1>
       </header>
       <main>
-        {data && <SingleThreadCard {...data.thread} />}
-        <NewThreadForm replyThreadId={threadId} isReply={true} />
+        <InfiniteThreadList
+          threads={infiniteParentFeed.data?.pages.flatMap(page => page.threads)}
+          isError={infiniteParentFeed.isError}
+          isLoading={infiniteParentFeed.isLoading}
+          hasMore={infiniteParentFeed.hasNextPage || false}
+          fetchNewThreads={infiniteParentFeed.fetchNextPage}
+          childThreadId={threadId}
+        />
+        <div ref={mainThreadRef}>
+          {data && <SingleThreadCard {...data.thread} />}
+          <NewThreadForm replyThreadId={threadId} isReply={true} />
+        </div>
         <InfiniteThreadList
           threads={infiniteReplyThreads.data?.pages.flatMap(page => page.threads)}
           isError={infiniteReplyThreads.isError}
@@ -87,27 +109,33 @@ function SingleThreadCard({
     toggleLike.mutate({ id })
   }
 
-  return <li className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
+  return (
+    <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200
         ">
-    <Link href={`/profile/${user.id}`}>
-      <ProfileImg src={user.image} />
-    </Link>
-    <div>
-      <div className="flex flex-grow gap-2 ">
-        <Link href={`/profile/${user.id}`} className="
+      <Link href={`/profile/${user.id}`}>
+        <ProfileImg src={user.image} />
+      </Link>
+      <div className="flex-grow">
+        <div className="flex flex-grow gap-2 ">
+          <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
-        <span className="text-gray-500">-</span>
-        <span className="text-gray-500">{dateTimeFormatter.format(createdAt)}</span>
+          <span className="text-gray-500">-</span>
+          <span className="text-gray-500">{dateTimeFormatter.format(createdAt)}</span>
+        </div>
+        <Link href={`/thread/${id}`}>
+          <p className="whitespace-pre-wrap">
+            {content}
+          </p>
+        </Link>
+        <div className="border-b mt-4 border-gray-200 m-2 flex-grow">
+          <HeartButton className="w-6 h-6" onClick={handleToggleLike}
+            isLoading={toggleLike.isLoading}
+            likedByMe={likedByMe} likeCount={likeCount} />
+        </div>
       </div>
-      <Link href={`/thread/${id}`}>
-        <p className="whitespace-pre-wrap">
-          {content}
-        </p>
-      </Link>
-      <HeartButton onClick={handleToggleLike} isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
-    </div>
-  </li>
+    </li>
+  )
 }

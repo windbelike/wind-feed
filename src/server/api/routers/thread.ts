@@ -10,6 +10,75 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
+  infiniteParentFeed: publicProcedure.input(
+    z.object({
+      threadId: z.string(),
+      limit: z.number().optional(),
+      cursor: z.string().optional(),
+    })
+  ).query(async opt => {
+    const ctx = opt.ctx
+    const { limit = 10, cursor, threadId } = opt.input
+    const childThreadId = cursor != null ? cursor : threadId
+    console.log("cursor:", cursor)
+    console.log("threadId", threadId)
+    console.log("childThreadId:", childThreadId)
+    const currUserId = ctx.session?.user.id
+    const parentThreadList = []
+    let parentThread: any = {}
+    parentThread.id = childThreadId
+    let total = 0
+    // todo cache for performance
+    while (total == 0 || parentThread != null) {
+      if (total > limit + 1) {
+        break
+      }
+      total++
+      parentThread = await ctx.prisma.thread.findFirst({
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          _count: { select: { likes: true } },
+          // likes by myself
+          likes: currUserId == null
+            ? false
+            : { where: { userId: currUserId } },
+          user: {
+            select: { name: true, id: true, image: true }
+          }
+        },
+        where: {
+          childrenThread: { some: { id: parentThread.id } }
+        },
+      })
+      console.log("parent item:", parentThread)
+      if (parentThread == null) {
+        break
+      }
+      parentThreadList.push(parentThread)
+    }
+    let nextCursor: typeof cursor | undefined
+    if (parentThreadList.length > limit) {
+      const nextItem = parentThreadList.pop()
+      if (nextItem != null) {
+        nextCursor = nextItem.id
+      }
+    }
+
+    return {
+      threads: parentThreadList.map(thread => {
+        return {
+          id: thread.id,
+          content: thread.content,
+          createdAt: thread.createdAt,
+          likeCount: thread._count.likes,
+          user: thread.user,
+          likedByMe: thread.likes?.length > 0
+        }
+      }), nextCursor
+    }
+  }),
   infiniteReplyFeed: publicProcedure.input(
     z.object({
       threadId: z.string(),
@@ -54,8 +123,6 @@ export const threadRouter = createTRPCRouter({
 
     return replyResult
   }),
-  // infinite query which can happen in the middle
-  // todo: split this query into 3 individual queries
   threadDetail: publicProcedure.input(
     z.object({
       threadId: z.string(),
@@ -66,20 +133,6 @@ export const threadRouter = createTRPCRouter({
     const ctx = opt.ctx
     const { limit = 10, cursor, threadId } = opt.input
     const currUserId = ctx.session?.user.id
-    // todo 1. cache design: After writing a thread to db, write it to the cache as well
-    // todo 2. paging
-
-    const children = await ctx.prisma.thread.findMany({
-      where: {
-        parentThreadId: threadId
-      }
-    })
-
-    const parents = await ctx.prisma.thread.findMany({
-      where: {
-        childrenThread: { some: { id: threadId } }
-      }
-    })
 
     const thread = await ctx.prisma.thread.findFirst({
       select: {
@@ -105,8 +158,6 @@ export const threadRouter = createTRPCRouter({
     }
 
     const result = {
-      threadParents: parents,
-      threadChilren: children,
       thread: {
         id: thread.id,
         content: thread.content,

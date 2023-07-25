@@ -135,6 +135,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   }
 
   const buttonDisabled = replyThread.isLoading || createThread.isLoading
+  const placeholderTxt = isReply? "Sent your reply ~" : "What's happening?"
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col px-4 py-2 border-b">
@@ -145,7 +146,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
           rounded-lg h-24
           max-h-96 overflow-y-auto
       overflow-hidden text-lg p-4
-      " placeholder="What's happening?" />
+      " placeholder={placeholderTxt}/>
       </div>
       <Button disabled={buttonDisabled} className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
     </form>

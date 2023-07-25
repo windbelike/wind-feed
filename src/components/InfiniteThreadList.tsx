@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react"
 import { VscHeartFilled, VscHeart } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
+import { useRouter } from "next/router"
 
 export type ThreadProps = {
   id: string
@@ -15,6 +16,7 @@ export type ThreadProps = {
   likedByMe: boolean
   user: { id: string, image: string | null, name: string | null }
   parentThreadId?: string
+  childThreadId?: string
 }
 
 export type InfiniteThreadListProps = {
@@ -23,7 +25,8 @@ export type InfiniteThreadListProps = {
   hasMore: boolean
   fetchNewThreads: () => Promise<unknown>
   threads: ThreadProps[] | undefined
-  parentThreadId?: string
+  parentThreadId?: string // for reply feed
+  childThreadId?: string // for parent feed
 }
 
 export default function InfiniteThreadList({
@@ -32,7 +35,8 @@ export default function InfiniteThreadList({
   isError,
   hasMore,
   fetchNewThreads,
-  parentThreadId
+  parentThreadId,
+  childThreadId
 }: InfiniteThreadListProps) {
   if (isLoading) {
     return <LoadingSpinner />
@@ -41,9 +45,27 @@ export default function InfiniteThreadList({
     return <div>Error...</div>
   }
   if (threads == null || threads.length == 0) {
-    return <div className="flex justify-center text-xl text-gray-300 mt-4">No Threads</div>
+    // return <div className="flex justify-center text-xl text-gray-300 mt-4">No Threads</div>
+    return
+  }
+  if (childThreadId != null) {
+    // inversed parent feed
+    return <ul>
+      <InfiniteScroll
+        dataLength={threads.length}
+        next={fetchNewThreads}
+        hasMore={hasMore}
+        loader={"loading..."}
+        inverse={true}
+      >
+        {threads.map(thread => {
+          return <ThreadCard key={thread.id} {...thread} childThreadId={childThreadId} />;
+        })}
+      </InfiniteScroll>
+    </ul>
   }
 
+  // home feed or reply feed
   return <ul>
     <InfiniteScroll
       dataLength={threads.length}
@@ -67,17 +89,17 @@ function ThreadCard({
   createdAt,
   likedByMe,
   likeCount,
-  parentThreadId
+  parentThreadId,
+  childThreadId
 }
   : ThreadProps) {
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
       // mutate the updated liked thread data in cache 
-      const updateDataFn: Parameters<
+      const updateLikeFn: Parameters<
         typeof trpcUtils.thread.infiniteFeed.setInfiniteData
       >[1] = (oldData) => {
-        console.log("oldData:", oldData)
         if (oldData == null) {
           return
         }
@@ -106,35 +128,76 @@ function ThreadCard({
       }
 
       // update home page recent feed
-      trpcUtils.thread.infiniteFeed.setInfiniteData({}, updateDataFn);
+      trpcUtils.thread.infiniteFeed.setInfiniteData({}, updateLikeFn);
       // update home page following feed
       trpcUtils.thread.infiniteFeed.setInfiniteData(
         { onlyFollowing: true },
-        updateDataFn
+        updateLikeFn
       );
       // update profile feed
       trpcUtils.thread.infiniteProfileFeed.setInfiniteData(
         { userId: user.id },
-        updateDataFn
+        updateLikeFn
       );
-      // console.log("update reply feed")
       // update thread detail reply feed
-      if (parentThreadId == null) {
-        return
+      if (parentThreadId != null) {
+        trpcUtils.thread.infiniteReplyFeed.setInfiniteData(
+          { threadId: parentThreadId },
+          updateLikeFn
+        )
       }
-      trpcUtils.thread.infiniteReplyFeed.setInfiniteData(
-        { threadId: parentThreadId },
-        updateDataFn
-      )
+
+      // update parent feed's like
+      if (childThreadId != null) {
+        trpcUtils.thread.infiniteParentFeed.setInfiniteData(
+          { threadId: childThreadId },
+          (oldData) => {
+            if (oldData == null) {
+              return
+            }
+            const countModifier = data.addedLike ? 1 : -1;
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map(page => {
+                return {
+                  ...page,
+                  threads:
+                    page.threads.map(thread => {
+                      if (thread.id == id) {
+                        return {
+                          ...thread,
+                          likeCount: thread.likeCount + countModifier,
+                          likedByMe: data.addedLike
+                        }
+                      }
+
+                      return thread
+                    })
+                }
+              })
+            }
+          }
+        )
+      }
     }
   })
   function handleToggleLike() {
     toggleLike.mutate({ id })
   }
 
+  const router = useRouter()
+  function handleClickThread(e: any) {
+    console.log(e.target.id)
+    if (e.target.id != "threadCardId") {
+      return
+    }
+    router.push(`/thread/${id}`)
+  }
+
   // todo click the blank, jump to thread detail
   return (
-    <li className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
+    <li id="threadCardId" onClick={handleClickThread} className="flex gap-4 border-b px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200
         ">
@@ -165,16 +228,28 @@ type HeartButtonProps = {
   onClick: () => void
   likedByMe: boolean
   likeCount: number
+  className?: string
 }
 
-export function HeartButton({ likedByMe, likeCount, onClick, isLoading }: HeartButtonProps) {
+type ReplyButtonProps = {
+  onClick: () => void
+  replyCount: number
+  className?: string
+}
+
+export function ReplyButton({ className, onClick, replyCount }:
+  ReplyButtonProps) {
+
+}
+
+export function HeartButton({ className, likedByMe, likeCount, onClick, isLoading }: HeartButtonProps) {
   const session = useSession()
   const HeartIcon = likedByMe ? VscHeartFilled : VscHeart
 
   if (session.status != "authenticated") {
     return (
       <div className="my-1 flex items-center gap-3 self-start">
-        <HeartIcon />
+        <HeartIcon className={`${className}`} />
         <span>{likeCount}</span>
       </div>
     )
@@ -189,7 +264,7 @@ export function HeartButton({ likedByMe, likeCount, onClick, isLoading }: HeartB
         }
     `}>
         <IconHoverEffect red>
-          <HeartIcon className="" />
+          <HeartIcon className={`${className}`} />
         </IconHoverEffect>
         <span>{likeCount}</span>
       </button>
