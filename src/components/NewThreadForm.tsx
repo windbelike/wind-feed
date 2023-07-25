@@ -124,7 +124,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (threadInput == "") {
+    if (threadInput == null || threadInput.trim() == "") {
       return
     }
     if (isReply) {
@@ -135,7 +135,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   }
 
   const buttonDisabled = replyThread.isLoading || createThread.isLoading
-  const placeholderTxt = isReply? "Sent your reply ~" : "What's happening?"
+  const placeholderTxt = isReply? "Send your reply ~" : "What's happening?"
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col px-4 py-2 border-b">
