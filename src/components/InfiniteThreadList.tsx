@@ -205,7 +205,7 @@ function ThreadCard({
         <Link href={`/profile/${user.id}`}>
           <ProfileImg src={user.image} />
         </Link>
-        <p className="text-2xl">|</p>
+        {childThreadId && <p className="text-2xl">|</p>}
       </div>
       <div>
         <div className="flex flex-grow gap-2 ">
