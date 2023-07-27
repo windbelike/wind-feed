@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component"
 import { api } from "~/utils/api"
 import ProfileImg from "./ProfileImg"
 import { useSession } from "next-auth/react"
-import { VscHeartFilled, VscHeart } from "react-icons/vsc"
+import { VscHeartFilled, VscHeart, VscComment } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
 import { useRouter } from "next/router"
@@ -13,6 +13,7 @@ export type ThreadProps = {
   content: string
   createdAt: Date
   likeCount: number
+  replyCount: number
   likedByMe: boolean
   user: { id: string, image: string | null, name: string | null }
   parentThreadId?: string
@@ -48,6 +49,7 @@ export default function InfiniteThreadList({
     // return <div className="flex justify-center text-xl text-gray-300 mt-4">No Threads</div>
     return
   }
+
   if (childThreadId != null) {
     // inversed parent feed
     return <ul>
@@ -89,6 +91,7 @@ function ThreadCard({
   createdAt,
   likedByMe,
   likeCount,
+  replyCount,
   parentThreadId,
   childThreadId
 }
@@ -198,7 +201,7 @@ function ThreadCard({
   // todo click the blank, jump to thread detail
   return (
     <li id="threadCardId" onClick={handleClickThread} className={`flex gap-4
-    ${childThreadId == null ? 'border-b' : ''} px-4 py-2 hover:bg-gray-100
+    ${childThreadId == null ? 'border-b' : ''} px-4 pt-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200`}>
       <div className="flex flex-col items-center">
@@ -220,7 +223,11 @@ function ThreadCard({
             {content}
           </p>
         </Link>
-        <HeartButton onClick={handleToggleLike} isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
+        <div className="flex justify-start gap-6">
+          <HeartButton onClick={handleToggleLike}
+            isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
+          <ReplyButton onClick={() => null} replyCount={replyCount} />
+        </div>
       </div>
     </li>
   )
@@ -242,7 +249,29 @@ type ReplyButtonProps = {
 
 export function ReplyButton({ className, onClick, replyCount }:
   ReplyButtonProps) {
+  const session = useSession()
 
+  if (session.status != "authenticated") {
+    return (
+      <div className="my-1 flex items-center gap-3 self-start">
+        <VscComment className={`${className}`} />
+        <span>{replyCount}</span>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <button onClick={onClick} className={`text-gray-500 group -ml-2 flex gap-1 items-center self-start
+      transition-colors duration-200 }
+    `}>
+        <IconHoverEffect>
+          <VscComment className={`${className}`} />
+        </IconHoverEffect>
+        <span>{replyCount}</span>
+      </button>
+    </>
+  )
 }
 
 export function HeartButton({ className, likedByMe, likeCount, onClick, isLoading }: HeartButtonProps) {

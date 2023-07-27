@@ -39,7 +39,7 @@ export const threadRouter = createTRPCRouter({
           id: true,
           content: true,
           createdAt: true,
-          _count: { select: { likes: true } },
+          _count: { select: { likes: true, childrenThread: true } },
           // likes by myself
           likes: currUserId == null
             ? false
@@ -73,6 +73,7 @@ export const threadRouter = createTRPCRouter({
           content: thread.content,
           createdAt: thread.createdAt,
           likeCount: thread._count.likes,
+          replyCount: thread._count.childrenThread,
           user: thread.user,
           likedByMe: thread.likes?.length > 0
         }
@@ -139,7 +140,7 @@ export const threadRouter = createTRPCRouter({
         id: true,
         content: true,
         createdAt: true,
-        _count: { select: { likes: true } },
+        _count: { select: { likes: true, childrenThread: true } },
         // likes by myself
         likes: currUserId == null
           ? false
@@ -163,6 +164,7 @@ export const threadRouter = createTRPCRouter({
         content: thread.content,
         createdAt: thread.createdAt,
         likeCount: thread._count.likes,
+        replyCount: thread._count.childrenThread,
         user: thread.user,
         likedByMe: thread.likes?.length > 0
       }
@@ -271,7 +273,7 @@ async function getInfiniteThreads({
       id: true,
       content: true,
       createdAt: true,
-      _count: { select: { likes: true } },
+      _count: { select: { likes: true, childrenThread: true } },
       // likes by myself
       likes: currUserId == null
         ? false
@@ -297,6 +299,7 @@ async function getInfiniteThreads({
         content: thread.content,
         createdAt: thread.createdAt,
         likeCount: thread._count.likes,
+        replyCount: thread._count.childrenThread,
         user: thread.user,
         likedByMe: thread.likes?.length > 0
       }

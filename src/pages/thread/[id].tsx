@@ -1,10 +1,9 @@
-import { read } from "fs"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
 import { VscArrowLeft } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
-import InfiniteThreadList, { HeartButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
+import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
 import LoadingSpinner from "~/components/LoadingSpinner"
 import NewThreadForm from "~/components/NewThreadForm"
 import ProfileImg from "~/components/ProfileImg"
@@ -73,7 +72,7 @@ export default function() {
           childThreadId={threadId}
         />
         <div ref={mainThreadRef}>
-          {data && <SingleThreadCard {...data.thread} />}
+          {data && <ThreadDetailCard {...data.thread} />}
           <NewThreadForm replyThreadId={threadId} isReply={true} />
         </div>
         <InfiniteThreadList
@@ -89,16 +88,17 @@ export default function() {
   )
 }
 
-function SingleThreadCard({
+
+function ThreadDetailCard({
   id,
   content,
   user,
   createdAt,
   likedByMe,
-  likeCount
+  likeCount,
+  replyCount
 }: ThreadProps) {
-
-
+  const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {
@@ -109,6 +109,8 @@ function SingleThreadCard({
   function handleToggleLike() {
     toggleLike.mutate({ id })
   }
+
+  const buttonSizeClasses = 'w-6 h-6'
 
   return (
     <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
@@ -123,18 +125,16 @@ function SingleThreadCard({
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
-          <span className="text-gray-500">-</span>
-          <span className="text-gray-500">{dateTimeFormatter.format(createdAt)}</span>
         </div>
-        <Link href={`/thread/${id}`}>
-          <p className="whitespace-pre-wrap">
-            {content}
-          </p>
-        </Link>
-        <div className="border-b mt-4 border-gray-200 m-2 flex-grow">
-          <HeartButton className="w-6 h-6" onClick={handleToggleLike}
+        <p className="whitespace-pre-wrap">
+          {content}
+        </p>
+        <div className="hover:underline mt-8 text-gray-500">{dateTimeFormatter.format(createdAt)}</div>
+        <div className="flex justify-start items-center gap-9 border-b mt-4 border-gray-200 m-2 flex-grow">
+          <HeartButton className={buttonSizeClasses} onClick={handleToggleLike}
             isLoading={toggleLike.isLoading}
             likedByMe={likedByMe} likeCount={likeCount} />
+          <ReplyButton className={buttonSizeClasses} onClick={() => null} replyCount={replyCount} />
         </div>
       </div>
     </li>
