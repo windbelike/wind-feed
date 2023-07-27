@@ -47,6 +47,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
           ...newReply,
           likeCount: 0,
           likedByMe: false,
+          replyCount: 0,
           user: {
             id: session.data.user.id,
             name: session.data.user.name || null,
@@ -89,6 +90,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
         const thread2Insert = {
           ...newThread,
           likeCount: 0,
+          replyCount: 0,
           likedByMe: false,
           user: {
             id: session.data.user.id,
