@@ -18,6 +18,7 @@ export type ThreadProps = {
   user: { id: string, image: string | null, name: string | null }
   parentThreadId?: string
   childThreadId?: string
+  hasParent?: boolean
 }
 
 export type InfiniteThreadListProps = {

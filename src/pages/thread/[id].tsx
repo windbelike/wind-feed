@@ -13,9 +13,7 @@ export default function() {
   const router = useRouter()
   let threadId = router.query.id as string
   let ready = router.isReady
-  const mainThreadRef = useRef<HTMLDivElement>(null)
   let makeScrollBarCalssName = ''
-
 
   const { data, isLoading, isError } = api.thread.threadDetail.useQuery(
     { threadId }, { enabled: ready }
@@ -31,15 +29,25 @@ export default function() {
     { getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: ready },
   )
 
+  // scroll main thread into viewport
   useEffect(() => {
-    // todo fix this
-    // if (infiniteParentFeed.data != null && infiniteParentFeed.data.pages[0]?.threads.length != 0) {
-    //   if (mainThreadRef.current != null) {
-    //     console.log("scroll to ", mainThreadRef.current?.scrollHeight)
-    //     scrollTo(0, mainThreadRef.current.scrollHeight)
-    //   }
-    // }
-  }, [mainThreadRef.current, infiniteParentFeed.data])
+    const isFirstRenderParentThread = infiniteParentFeed.data?.pages.length == 1
+    if (isFirstRenderParentThread) {
+      // get header's height
+      var headerOffset = document.getElementById("threadHead")!.scrollHeight;
+      // get top offset to viewport
+      var elementPosition = document.getElementById("threadDetail")!.getBoundingClientRect().top;
+
+      // padding for top
+      const paddingTop = 10
+      // scroll to specific offset by pixel
+      var offsetPosition = elementPosition - headerOffset - paddingTop
+      window.scrollTo({
+        top: offsetPosition,
+        // behavior: "smooth"
+      });
+    }
+  }, [infiniteParentFeed.data])
 
   if (threadId == null) {
     return <div className="flex justify-center font-bold text-2xl">
@@ -58,9 +66,11 @@ export default function() {
     makeScrollBarCalssName = "h-screen"
   }
 
+  const hasParent = infiniteParentFeed.data?.pages[0]?.threads.length != 0
+
   return (
     <>
-      <header className="sticky top-0 flex items-center border-b bg-white z-10
+      <header id="threadHead" className="sticky top-0 flex items-center border-b bg-white z-10
       px-4 py-2">
         <div onClick={() => router.back()} className="mr-2">
           <IconHoverEffect>
@@ -80,9 +90,9 @@ export default function() {
           fetchNewThreads={infiniteParentFeed.fetchNextPage}
           childThreadId={threadId}
         />
-        <div ref={mainThreadRef} className={makeScrollBarCalssName}>
-          <div >
-            {data && <ThreadDetailCard {...data.thread} />}
+        <div className={makeScrollBarCalssName}>
+          <div id="threadDetail">
+            {data && <ThreadDetailCard {...data.thread} hasParent={hasParent} />}
             <NewThreadForm replyThreadId={threadId} isReply={true} />
           </div>
           <InfiniteThreadList
@@ -107,7 +117,8 @@ function ThreadDetailCard({
   createdAt,
   likedByMe,
   likeCount,
-  replyCount
+  replyCount,
+  hasParent
 }: ThreadProps) {
   const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
   const trpcUtils = api.useContext();
@@ -124,7 +135,7 @@ function ThreadDetailCard({
   const buttonSizeClasses = 'w-6 h-6'
 
   return (
-    <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
+    <li className="flex gap-4 px-4 pb-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200
         ">

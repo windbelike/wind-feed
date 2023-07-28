@@ -54,8 +54,8 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
             image: session.data.user.image || null,
           }
         }
-        console.log("thread2Insert:", JSON.stringify(thread2Insert))
-        console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
+        // console.log("thread2Insert:", JSON.stringify(thread2Insert))
+        // console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
 
         return {
           ...oldData,
@@ -98,8 +98,8 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
             image: session.data.user.image || null,
           }
         }
-        console.log("thread2Insert:", JSON.stringify(thread2Insert))
-        console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
+        // console.log("thread2Insert:", JSON.stringify(thread2Insert))
+        // console.log("page0[0]", JSON.stringify(oldData.pages[0].threads[0]))
 
         return {
           ...oldData,
