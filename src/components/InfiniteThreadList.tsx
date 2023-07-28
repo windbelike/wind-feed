@@ -82,7 +82,7 @@ export default function InfiniteThreadList({
   </ul>
 }
 
-// export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
+export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
 const formatter = new Intl.RelativeTimeFormat(undefined, {
   numeric: "auto",
 })
