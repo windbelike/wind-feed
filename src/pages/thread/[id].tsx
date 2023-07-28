@@ -50,7 +50,7 @@ export default function() {
         // behavior: "smooth"
       });
     }
-  }, [infiniteParentFeed.data])
+  }, [infiniteParentFeed.data?.pages.length])
 
   if (threadId == null) {
     return <div className="flex justify-center font-bold text-2xl">
