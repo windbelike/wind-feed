@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { VscArrowLeft } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
 import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
@@ -14,6 +14,9 @@ export default function() {
   let threadId = router.query.id as string
   let ready = router.isReady
   const mainThreadRef = useRef<HTMLDivElement>(null)
+  let makeScrollBarCalssName = ''
+
+
   const { data, isLoading, isError } = api.thread.threadDetail.useQuery(
     { threadId }, { enabled: ready }
   )
@@ -28,6 +31,16 @@ export default function() {
     { getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: ready },
   )
 
+  useEffect(() => {
+    // todo fix this
+    // if (infiniteParentFeed.data != null && infiniteParentFeed.data.pages[0]?.threads.length != 0) {
+    //   if (mainThreadRef.current != null) {
+    //     console.log("scroll to ", mainThreadRef.current?.scrollHeight)
+    //     scrollTo(0, mainThreadRef.current.scrollHeight)
+    //   }
+    // }
+  }, [mainThreadRef.current, infiniteParentFeed.data])
+
   if (threadId == null) {
     return <div className="flex justify-center font-bold text-2xl">
       No such thread</div>
@@ -41,12 +54,8 @@ export default function() {
     return <LoadingSpinner />
   }
 
-  // todo scroll to main thread
-  // todo reply count
-  if (infiniteParentFeed.data != null && mainThreadRef.current != null) {
-    // scroll to main thread
-    // window.scrollToHeight(mainThreadRef.current.scrollHeight)
-    mainThreadRef.current.scrollTop = 0
+  if (infiniteParentFeed.data != null && infiniteParentFeed.data.pages[0]?.threads.length != 0) {
+    makeScrollBarCalssName = "h-screen"
   }
 
   return (
@@ -62,7 +71,7 @@ export default function() {
           Thread
         </h1>
       </header>
-      <main>
+      <main >
         <InfiniteThreadList
           threads={infiniteParentFeed.data?.pages.flatMap(page => page.threads)}
           isError={infiniteParentFeed.isError}
@@ -71,18 +80,20 @@ export default function() {
           fetchNewThreads={infiniteParentFeed.fetchNextPage}
           childThreadId={threadId}
         />
-        <div ref={mainThreadRef}>
-          {data && <ThreadDetailCard {...data.thread} />}
-          <NewThreadForm replyThreadId={threadId} isReply={true} />
+        <div ref={mainThreadRef} className={makeScrollBarCalssName}>
+          <div >
+            {data && <ThreadDetailCard {...data.thread} />}
+            <NewThreadForm replyThreadId={threadId} isReply={true} />
+          </div>
+          <InfiniteThreadList
+            threads={infiniteReplyThreads.data?.pages.flatMap(page => page.threads)}
+            isError={infiniteReplyThreads.isError}
+            isLoading={infiniteReplyThreads.isLoading}
+            hasMore={infiniteReplyThreads.hasNextPage || false}
+            fetchNewThreads={infiniteReplyThreads.fetchNextPage}
+            parentThreadId={threadId}
+          />
         </div>
-        <InfiniteThreadList
-          threads={infiniteReplyThreads.data?.pages.flatMap(page => page.threads)}
-          isError={infiniteReplyThreads.isError}
-          isLoading={infiniteReplyThreads.isLoading}
-          hasMore={infiniteReplyThreads.hasNextPage || false}
-          fetchNewThreads={infiniteReplyThreads.fetchNextPage}
-          parentThreadId={threadId}
-        />
       </main>
     </>
   )

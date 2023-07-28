@@ -147,7 +147,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
           className="flex-grow bg-gray-50 outline-none resize-none
           rounded-lg h-24
           max-h-96 overflow-y-auto
-      overflow-hidden text-lg p-4
+       text-lg p-4
       " placeholder={placeholderTxt}/>
       </div>
       <Button disabled={buttonDisabled} className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
