@@ -33,6 +33,7 @@ export default function() {
   useEffect(() => {
     const isFirstRenderParentThread = infiniteParentFeed.data?.pages.length == 1
     if (isFirstRenderParentThread) {
+      console.log("scroll, data:", JSON.stringify(infiniteParentFeed.data))
       // get header's height
       var headerOffset = document.getElementById("threadHead")!.scrollHeight;
       // get top offset to viewport
