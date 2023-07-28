@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { off } from "process"
 import { useEffect, useRef } from "react"
 import { VscArrowLeft } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
@@ -32,7 +33,7 @@ export default function() {
   // scroll main thread into viewport
   useEffect(() => {
     const isFirstRenderParentThread = infiniteParentFeed.data?.pages.length == 1
-    if (isFirstRenderParentThread) {
+    if (isFirstRenderParentThread && infiniteParentFeed.data?.pages[0]?.threads.length != 0) {
       console.log("scroll, data:", JSON.stringify(infiniteParentFeed.data))
       // get header's height
       var headerOffset = document.getElementById("threadHead")!.scrollHeight;
@@ -43,6 +44,7 @@ export default function() {
       const paddingTop = 10
       // scroll to specific offset by pixel
       var offsetPosition = elementPosition - headerOffset - paddingTop
+      console.log("offsetPosition:", offsetPosition)
       window.scrollTo({
         top: offsetPosition,
         // behavior: "smooth"
