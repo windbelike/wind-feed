@@ -17,9 +17,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
           Wind Thread
         </title>
       </Head>
-      <div className="container flex">
+      <div className="container flex justify-center">
         <SideBar />
-        <div className="min-h-screen border-x flex-grow ">
+        <div className="max-w-2xl min-h-screen border-x flex-grow ">
           <Component {...pageProps} />
         </div>
       </div>
