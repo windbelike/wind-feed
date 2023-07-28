@@ -34,17 +34,14 @@ export default function() {
   useEffect(() => {
     const isFirstRenderParentThread = infiniteParentFeed.data?.pages.length == 1
     if (isFirstRenderParentThread && infiniteParentFeed.data?.pages[0]?.threads.length != 0) {
-      console.log("scroll, data:", JSON.stringify(infiniteParentFeed.data))
       // get header's height
       var headerOffset = document.getElementById("threadHead")!.scrollHeight;
       // get top offset to viewport
       var elementPosition = document.getElementById("threadDetail")!.getBoundingClientRect().top;
-
       // padding for top
       const paddingTop = 10
       // scroll to specific offset by pixel
       var offsetPosition = elementPosition - headerOffset - paddingTop
-      console.log("offsetPosition:", offsetPosition)
       window.scrollTo({
         top: offsetPosition,
         // behavior: "smooth"
@@ -138,7 +135,7 @@ function ThreadDetailCard({
   const buttonSizeClasses = 'w-6 h-6'
 
   return (
-    <li className="flex gap-4 px-4 pb-2 hover:bg-gray-100
+    <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200
         ">
