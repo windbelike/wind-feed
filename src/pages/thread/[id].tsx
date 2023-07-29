@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { off } from "process"
 import { useEffect, useRef } from "react"
 import { VscArrowLeft } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
