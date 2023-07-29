@@ -42,6 +42,7 @@ export default function() {
       const paddingTop = 10
       // scroll to specific offset by pixel
       var offsetPosition = elementPosition - headerOffset - paddingTop
+      console.log("elementPosition:", elementPosition)
       window.scrollTo({
         top: offsetPosition,
         // behavior: "smooth"
