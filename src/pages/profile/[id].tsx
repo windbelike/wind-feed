@@ -61,11 +61,13 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
           <div className="ml-2 flex-grow">
             <h1 className="font-bold text-lg">{data.name}</h1>
           </div>
-          <FollowButton
-            userId={id}
-            isFollowing={data.isFollowing}
-            onClick={() => toggleFollow.mutate({ userId: id })}
-            isLoading={toggleFollow.isLoading} />
+          <div className="self-end">
+            <FollowButton
+              userId={id}
+              isFollowing={data.isFollowing}
+              onClick={() => toggleFollow.mutate({ userId: id })}
+              isLoading={toggleFollow.isLoading} />
+          </div>
         </div>
         <div className="text-gray-500 text-sm flex gap-1">
           <span className="hover:underline focus-visible:underline">{data.threadsCount} Threads</span>
