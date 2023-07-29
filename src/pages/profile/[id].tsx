@@ -69,7 +69,7 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
               isLoading={toggleFollow.isLoading} />
           </div>
         </div>
-        <div className="text-gray-500 text-sm flex gap-1 mt-5">
+        <div className="text-gray-500 text-sm flex gap-3 mt-5">
           <span className="hover:cursor-pointer hover:underline focus-visible:underline">
             <span className="font-bold text-black">{data.threadsCount} </span>
             Threads
