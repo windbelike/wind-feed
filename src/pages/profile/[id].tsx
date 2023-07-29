@@ -49,27 +49,29 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
       <Head>
         <title>{`Wind Thread - ${data.name}`}</title>
       </Head>
-      <header className="sticky top-0 flex items-center border-b bg-white
+      <header className="sticky top-0 flex flex-col items-start border-b bg-white
       z-10 px-4 py-2">
-        <div onClick={() => router.back()} className="mr-2">
-          <IconHoverEffect>
-            <VscArrowLeft className="w-6 h-6" />
-          </IconHoverEffect>
-        </div>
-        <ProfileImg src={data.image} className="flex-shrink-0" />
-        <div className="ml-2 flex-grow">
-          <h1 className="font-bold text-lg">{data.name}</h1>
-          <div className="text-gray-500 text-sm flex gap-1">
-            <span className="hover:underline focus-visible:underline">{data.threadsCount} Threads</span>
-            <span className="hover:underline focus-visible:underline">{data.followsCount} Following</span>
-            <span className="hover:underline focus-visible:underline">{data.followersCount} Follower</span>
+        <div className="flex items-center">
+          <div onClick={() => router.back()} className="mr-2">
+            <IconHoverEffect>
+              <VscArrowLeft className="w-6 h-6" />
+            </IconHoverEffect>
           </div>
+          <ProfileImg src={data.image} className="flex-shrink-0" />
+          <div className="ml-2 flex-grow">
+            <h1 className="font-bold text-lg">{data.name}</h1>
+          </div>
+          <FollowButton
+            userId={id}
+            isFollowing={data.isFollowing}
+            onClick={() => toggleFollow.mutate({ userId: id })}
+            isLoading={toggleFollow.isLoading} />
         </div>
-        <FollowButton
-          userId={id}
-          isFollowing={data.isFollowing}
-          onClick={() => toggleFollow.mutate({ userId: id })}
-          isLoading={toggleFollow.isLoading} />
+        <div className="text-gray-500 text-sm flex gap-1">
+          <span className="hover:underline focus-visible:underline">{data.threadsCount} Threads</span>
+          <span className="hover:underline focus-visible:underline">{data.followsCount} Following</span>
+          <span className="hover:underline focus-visible:underline">{data.followersCount} Follower</span>
+        </div>
       </header>
       <main>
         <InfiniteThreadList

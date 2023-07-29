@@ -221,7 +221,7 @@ function ThreadCard({
 
   const router = useRouter()
   function handleClickThread(e: any) {
-    console.log(e.target.id)
+    // console.log(e.target.id)
     if (e.target.id != "threadCardId") {
       return
     }
