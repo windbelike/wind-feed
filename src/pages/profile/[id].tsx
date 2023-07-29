@@ -51,17 +51,17 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
       </Head>
       <header className="sticky top-0 flex flex-col items-start border-b bg-white
       z-10 px-4 py-2">
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <div onClick={() => router.back()} className="mr-2">
             <IconHoverEffect>
               <VscArrowLeft className="w-6 h-6" />
             </IconHoverEffect>
           </div>
           <ProfileImg src={data.image} className="flex-shrink-0" />
-          <div className="ml-2 flex-grow">
+          <div className="ml-2 ">
             <h1 className="font-bold text-lg">{data.name}</h1>
           </div>
-          <div className="self-end">
+          <div className="ml-auto ">
             <FollowButton
               userId={id}
               isFollowing={data.isFollowing}
@@ -69,10 +69,18 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
               isLoading={toggleFollow.isLoading} />
           </div>
         </div>
-        <div className="text-gray-500 text-sm flex gap-1">
-          <span className="hover:underline focus-visible:underline">{data.threadsCount} Threads</span>
-          <span className="hover:underline focus-visible:underline">{data.followsCount} Following</span>
-          <span className="hover:underline focus-visible:underline">{data.followersCount} Follower</span>
+        <div className="text-gray-500 text-sm flex gap-1 mt-5">
+          <span className="hover:cursor-pointer hover:underline focus-visible:underline">
+            <span className="font-bold text-black">{data.threadsCount} </span>
+            Threads
+          </span>
+          <span className="hover:cursor-pointer hover:underline focus-visible:underline">
+            <span className="font-bold text-black">{data.followsCount} </span>
+            Following</span>
+          <span className="hover:cursor-pointer hover:underline focus-visible:underline">
+            <span className="font-bold text-black">{data.followersCount} </span>
+            Follower
+          </span>
         </div>
       </header>
       <main>
