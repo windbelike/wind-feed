@@ -191,7 +191,7 @@ type ThreadMenuProps = {
 function ThreadMenu({ id, user }: ThreadMenuProps) {
   const deleteMutation = api.thread.delete.useMutation()
   const me = useSession()
-  const disableDeleteButton = user == null || me.data?.user.id != user.id
+  const showDeleteButton = user == null || me.data?.user.id != user.id
 
   function onClickDelete() {
     if (id != null) {
@@ -203,13 +203,15 @@ function ThreadMenu({ id, user }: ThreadMenuProps) {
     }
   }
   return (
-    <div className="w-32 shadow-2xl bg-white absolute z-50 rounded-2xl
+    <div className="shadow-2xl bg-white absolute z-50 rounded-2xl
     translate-x-[-75%]">
-      <button disabled={disableDeleteButton} onClick={onClickDelete} className="p-3 flex gap-3 text-red-500 font-bold
+      {showDeleteButton && <button onClick={onClickDelete}
+        className="py-2 px-4 flex-grow flex gap-3 text-red-500 font-bold
       hover:bg-gray-200 rounded-2xl">
         <VscTrash className="w-6 h-6" />
         Delete
       </button>
+      }
     </div>
   )
 }
