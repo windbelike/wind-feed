@@ -47,7 +47,12 @@ export default function() {
         // behavior: "smooth"
       });
     }
-  }, [infiniteParentFeed.data?.pages.length])
+
+    // fix: don't scroll to the top when loading the page in mobile phone
+    if (infiniteParentFeed.data?.pages.length == 0) {
+      window.scrollTo(0, 0)
+    }
+  }, [threadId, infiniteParentFeed.data?.pages.length])
 
   if (threadId == null) {
     return <div className="flex justify-center font-bold text-2xl">
