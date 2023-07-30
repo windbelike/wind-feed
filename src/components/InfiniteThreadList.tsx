@@ -245,14 +245,14 @@ function ThreadCard({
         focus-visible:bg-gray-200 cursor-pointer
         duration-200`}>
       <div className="flex flex-col items-center">
-        <Link href={`/profile/${user.id}`}>
+        <Link href={`/profile/${user.id}`} onClick={e => e.stopPropagation()}>
           <ProfileImg src={user.image} />
         </Link>
         {childThreadId && <p className="text-2xl text-gray-400">|</p>}
       </div>
       <div className="flex-grow">
         <div className="flex flex-grow gap-2 ">
-          <Link href={`/profile/${user.id}`} className="
+          <Link onClick={e => e.stopPropagation()} href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
           <span className="text-gray-500">-</span>
@@ -264,11 +264,9 @@ function ThreadCard({
             {openMenu && <ThreadMenu id={id} user={user} />}
           </div>
         </div>
-        <Link href={`/thread/${id}`}>
-          <p className="whitespace-pre-wrap">
-            {content}
-          </p>
-        </Link>
+        <p className="whitespace-pre-wrap">
+          {content}
+        </p>
         <div className="flex justify-start gap-6">
           <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
