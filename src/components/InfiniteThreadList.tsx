@@ -3,10 +3,12 @@ import InfiniteScroll from "react-infinite-scroll-component"
 import { api } from "~/utils/api"
 import ProfileImg from "./ProfileImg"
 import { useSession } from "next-auth/react"
-import { VscHeartFilled, VscHeart, VscComment } from "react-icons/vsc"
+import { VscHeartFilled, VscHeart, VscComment, VscEllipsis } from "react-icons/vsc"
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
 import { useRouter } from "next/router"
+import ThreadMenu from "./ThreadMenu"
+import { useState } from "react"
 
 export type ThreadProps = {
   id: string
@@ -127,6 +129,7 @@ function ThreadCard({
   childThreadId
 }
   : ThreadProps) {
+  const [openMenu, setOpenMenu] = useState(false)
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
@@ -229,6 +232,10 @@ function ThreadCard({
     router.push(`/thread/${id}`)
   }
 
+  function onClickMenu(e: React.MouseEvent<HTMLElement>) {
+    setOpenMenu(!openMenu)
+  }
+
   // todo click the blank, jump to thread detail
   return (
     <li id="threadCardId" onClick={handleClickThread} className={`flex gap-4
@@ -241,13 +248,19 @@ function ThreadCard({
         </Link>
         {childThreadId && <p className="text-2xl text-gray-400">|</p>}
       </div>
-      <div>
+      <div className="flex-grow">
         <div className="flex flex-grow gap-2 ">
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
           <span className="text-gray-500">-</span>
           <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
+          <div onClick={onClickMenu} className="relative ml-auto select-none" >
+            <IconHoverEffect>
+              <VscEllipsis className="w-6 h-6" />
+            </IconHoverEffect>
+            {openMenu && <ThreadMenu id={id} user={user} />}
+          </div>
         </div>
         <Link href={`/thread/${id}`}>
           <p className="whitespace-pre-wrap">
