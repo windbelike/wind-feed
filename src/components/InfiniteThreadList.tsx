@@ -60,6 +60,7 @@ export default function InfiniteThreadList({
         hasMore={hasMore}
         loader={"loading..."}
         inverse={true}
+        style={{ display: "flex", flexDirection: "column-reverse" }}
       >
         {threads.map(thread => {
           return <ThreadCard key={thread.id} {...thread} childThreadId={childThreadId} />;
@@ -99,7 +100,7 @@ const DIVISIONS = [
 ]
 
 function formatTimeAgo(date: Date) {
-  let duration  = (date.getTime() - new Date().getTime()) / 1000
+  let duration = (date.getTime() - new Date().getTime()) / 1000
 
   for (let i = 0; i < DIVISIONS.length; i++) {
     const division = DIVISIONS[i]

@@ -18,7 +18,7 @@ export const threadRouter = createTRPCRouter({
     })
   ).query(async opt => {
     const ctx = opt.ctx
-    const { limit = 10, cursor, threadId } = opt.input
+    const { limit = 3, cursor, threadId } = opt.input
     const childThreadId = cursor != null ? cursor : threadId
     console.log("cursor:", cursor)
     console.log("threadId", threadId)
@@ -30,7 +30,7 @@ export const threadRouter = createTRPCRouter({
     let total = 0
     // todo cache for performance
     while (total == 0 || parentThread != null) {
-      if (total > limit + 1) {
+      if (total >= limit + 1) {
         break
       }
       total++
@@ -52,7 +52,7 @@ export const threadRouter = createTRPCRouter({
           childrenThread: { some: { id: parentThread.id } }
         },
       })
-      console.log("parent item:", parentThread)
+      // console.log("parent item:", parentThread)
       if (parentThread == null) {
         break
       }
@@ -66,7 +66,7 @@ export const threadRouter = createTRPCRouter({
       }
     }
 
-    return {
+    const result = {
       threads: parentThreadList.map(thread => {
         return {
           id: thread.id,
@@ -77,8 +77,12 @@ export const threadRouter = createTRPCRouter({
           user: thread.user,
           likedByMe: thread.likes?.length > 0
         }
-      }).reverse(), nextCursor
+      }), nextCursor
     }
+    console.log("parentlimit:", limit)
+    console.log("result:", JSON.stringify(result))
+
+    return result
   }),
   infiniteReplyFeed: publicProcedure.input(
     z.object({
