@@ -191,7 +191,7 @@ type ThreadMenuProps = {
 function ThreadMenu({ id, user }: ThreadMenuProps) {
   const deleteMutation = api.thread.delete.useMutation()
   const me = useSession()
-  const showDeleteButton = user == null || me.data?.user.id != user.id
+  const showDeleteButton = user != null &&  me.data?.user.id == user.id
 
   function onClickDelete() {
     if (id != null) {
