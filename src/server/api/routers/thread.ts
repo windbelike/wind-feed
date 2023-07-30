@@ -77,7 +77,7 @@ export const threadRouter = createTRPCRouter({
           user: thread.user,
           likedByMe: thread.likes?.length > 0
         }
-      }), nextCursor
+      }).reverse(), nextCursor
     }
   }),
   infiniteReplyFeed: publicProcedure.input(
