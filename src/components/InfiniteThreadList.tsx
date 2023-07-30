@@ -226,12 +226,11 @@ function ThreadCard({
   }
 
   const router = useRouter()
+  // fixme: event bubbling is not working
   function handleClickThread(e: any) {
-    // console.log(e.target.id)
-    if (e.target.id != "threadCardId") {
-      return
+    if (document.getElementById("threadCardId")?.contains(e.target)) {
+      router.push(`/thread/${id}`)
     }
-    router.push(`/thread/${id}`)
   }
 
   function onClickMenu(e: React.MouseEvent<HTMLElement>) {
