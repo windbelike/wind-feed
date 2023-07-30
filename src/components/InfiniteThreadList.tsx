@@ -235,6 +235,7 @@ function ThreadCard({
   }
 
   function onClickMenu(e: React.MouseEvent<HTMLElement>) {
+    e.stopPropagation()
     setOpenMenu(!openMenu)
   }
 
