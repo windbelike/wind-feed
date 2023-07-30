@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useEffect, useRef } from "react"
-import { VscArrowLeft } from "react-icons/vsc"
+import { useEffect, useRef, useState } from "react"
+import { VscArrowLeft, VscEllipsis, VscTrash } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
 import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
 import LoadingSpinner from "~/components/LoadingSpinner"
@@ -127,6 +127,7 @@ function ThreadDetailCard({
 }: ThreadProps) {
   const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
   const trpcUtils = api.useContext();
+  const [openMenu, setOpenMenu] = useState(false)
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {
       trpcUtils.thread.threadDetail.invalidate()
@@ -139,6 +140,10 @@ function ThreadDetailCard({
 
   const buttonSizeClasses = 'w-6 h-6'
 
+  function onClickMenu(e: React.MouseEvent<HTMLElement>) {
+    setOpenMenu(!openMenu)
+  }
+
   return (
     <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
@@ -148,10 +153,16 @@ function ThreadDetailCard({
         <ProfileImg src={user.image} />
       </Link>
       <div className="flex-grow">
-        <div className="flex flex-grow gap-2 ">
+        <div className="flex gap-2 ">
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
+          <div onClick={onClickMenu} className="relative ml-auto select-none" >
+            <IconHoverEffect>
+              <VscEllipsis className="w-6 h-6" />
+            </IconHoverEffect>
+            {openMenu && <ThreadMenu id={id} />}
+          </div>
         </div>
         <p className="whitespace-pre-wrap">
           {content}
@@ -165,5 +176,28 @@ function ThreadDetailCard({
         </div>
       </div>
     </li>
+  )
+}
+
+function ThreadMenu({ id }: { id: string }) {
+  const deleteMutation = api.thread.delete.useMutation()
+  function onClickDelete() {
+    if (id != null) {
+      deleteMutation.mutate({ threadId: id }, {
+        onSuccess: async (data) => {
+          console.log("delete result: ", data)
+        }
+      })
+    }
+  }
+  return (
+    <div className="w-32 shadow-2xl bg-white absolute z-50 rounded-2xl
+    translate-x-[-75%]">
+      <div onClick={onClickDelete} className="p-3 flex gap-3 text-red-500 font-bold
+      hover:bg-gray-200 hover:cursor-pointer rounded-2xl">
+        <VscTrash className="w-6 h-6" />
+        Delete
+      </div>
+    </div>
   )
 }

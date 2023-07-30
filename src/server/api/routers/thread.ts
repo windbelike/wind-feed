@@ -10,6 +10,29 @@ import {
 } from "~/server/api/trpc";
 
 export const threadRouter = createTRPCRouter({
+  delete: protectedProcedure.input(
+    z.object(
+      { threadId: z.string()}
+    )
+  ).mutation(async opt => {
+    const ctx = opt.ctx
+    const { threadId } = opt.input
+    const thread = await ctx.prisma.thread.findFirst({
+      where: { id: threadId},
+      select: {
+        userId: true
+      }
+    })
+    if (thread == null || thread.userId != ctx.session.user.id) {
+      return
+    }
+
+    const deleteResult = await ctx.prisma.thread.delete({
+      where: { id: threadId}
+    })
+
+    return deleteResult
+  }),
   infiniteParentFeed: publicProcedure.input(
     z.object({
       threadId: z.string(),
