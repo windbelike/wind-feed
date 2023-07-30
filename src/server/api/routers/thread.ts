@@ -93,8 +93,7 @@ export const threadRouter = createTRPCRouter({
   ).query(async opt => {
     const ctx = opt.ctx
     const { limit = 10, cursor, threadId } = opt.input
-    // find thread for certain profile
-    return await getInfiniteThreads({
+    const result = await getInfiniteThreads({
       ctx,
       limit,
       cursor,
@@ -102,6 +101,9 @@ export const threadRouter = createTRPCRouter({
         parentThreadId: threadId
       }
     })
+
+    result.threads.reverse()
+    return result
   }),
   replyThread: protectedProcedure.input(
     z.object({
