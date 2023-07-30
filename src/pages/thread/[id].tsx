@@ -2,12 +2,14 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
+import { toast } from "react-hot-toast"
 import { VscArrowLeft, VscEllipsis, VscTrash } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
 import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
 import LoadingSpinner from "~/components/LoadingSpinner"
 import NewThreadForm from "~/components/NewThreadForm"
 import ProfileImg from "~/components/ProfileImg"
+import ThreadMenu from "~/components/ThreadMenu"
 import { api } from "~/utils/api"
 
 export default function() {
@@ -133,6 +135,7 @@ function ThreadDetailCard({
   const [openMenu, setOpenMenu] = useState(false)
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {
+      toast.success("Liked")
       trpcUtils.thread.threadDetail.invalidate()
     }
   })
@@ -179,39 +182,5 @@ function ThreadDetailCard({
         </div>
       </div>
     </li>
-  )
-}
-
-
-type ThreadMenuProps = {
-  user?: { id: string, image: string | null, name: string | null }
-  id: string
-}
-
-function ThreadMenu({ id, user }: ThreadMenuProps) {
-  const deleteMutation = api.thread.delete.useMutation()
-  const me = useSession()
-  const showDeleteButton = user != null &&  me.data?.user.id == user.id
-
-  function onClickDelete() {
-    if (id != null) {
-      deleteMutation.mutate({ threadId: id }, {
-        onSuccess: async (data) => {
-          console.log("delete result: ", data)
-        }
-      })
-    }
-  }
-  return (
-    <div className="shadow-2xl bg-white absolute z-50 rounded-2xl
-    translate-x-[-75%]">
-      {showDeleteButton && <button onClick={onClickDelete}
-        className="py-2 px-4 flex-grow flex gap-3 text-red-500 font-bold
-      hover:bg-gray-200 rounded-2xl">
-        <VscTrash className="w-6 h-6" />
-        Delete
-      </button>
-      }
-    </div>
   )
 }

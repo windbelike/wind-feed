@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react"
+import { toast } from "react-hot-toast"
 import { VscTrash } from "react-icons/vsc"
 import { api } from "~/utils/api"
 
@@ -11,6 +12,8 @@ export default function ThreadMenu({ id, user }: ThreadMenuProps) {
   const trpcUtils = api.useContext();
   const deleteMutation = api.thread.delete.useMutation({
     onSuccess: async (data) => {
+      console.log("thread deleted")
+      toast.success("Thread Deleted")
       trpcUtils.thread.infiniteFeed.invalidate()
       trpcUtils.thread.threadDetail.invalidate()
     }

@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useRef, useState } from "react"
 import { api } from "~/utils/api"
 import ProfileImg from "./ProfileImg"
 import { Button } from "./Button"
+import { toast } from "react-hot-toast"
 
 export type NewThreadFormProps = {
   isReply?: boolean
@@ -29,6 +30,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   // todo update feeds after a reply
   const replyThread = api.thread.replyThread.useMutation({
     onSuccess: newReply => {
+      toast.success("Reply Created")
       setThreadInput("")
 
       if (session.data == null) {
@@ -75,6 +77,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   const trpcUtils = api.useContext()
   const createThread = api.thread.create.useMutation({
     onSuccess: newThread => {
+      toast.success("Thread Created")
       setThreadInput("")
 
       if (session.data == null) {

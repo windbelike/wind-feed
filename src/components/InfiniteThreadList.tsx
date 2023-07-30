@@ -9,6 +9,7 @@ import LoadingSpinner from "./LoadingSpinner"
 import { useRouter } from "next/router"
 import ThreadMenu from "./ThreadMenu"
 import { useState } from "react"
+import { toast } from "react-hot-toast"
 
 export type ThreadProps = {
   id: string
@@ -133,6 +134,7 @@ function ThreadCard({
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
+      toast.success("Liked")
       // mutate the updated liked thread data in cache 
       const updateLikeFn: Parameters<
         typeof trpcUtils.thread.infiniteFeed.setInfiniteData

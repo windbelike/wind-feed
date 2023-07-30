@@ -12,6 +12,7 @@ import InfiniteThreadList from "~/components/InfiniteThreadList";
 import { useSession } from "next-auth/react";
 import { Button } from "~/components/Button";
 import { router } from "@trpc/server";
+import { toast } from "react-hot-toast";
 
 export default function(props: InferGetServerSidePropsType<typeof getStaticProps>) {
   const { id } = props
@@ -27,6 +28,7 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
   const trpcUtils = api.useContext()
   const toggleFollow = api.profile.toggleFollow.useMutation({
     onSuccess: ({ addedFollow }) => {
+      toast.success(addedFollow ? "Followed" : "Unfollowed")
       trpcUtils.profile.getById.setData({ id }, (oldData) => {
         if (oldData == null) return;
 

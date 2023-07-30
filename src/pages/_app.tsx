@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Head from "next/head";
 import SideBar from "~/components/SideBar";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -21,6 +22,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SideBar />
         <div className="max-w-2xl min-h-screen border-x flex-grow ">
           <Component {...pageProps} />
+          <Toaster />
         </div>
       </div>
     </SessionProvider>
