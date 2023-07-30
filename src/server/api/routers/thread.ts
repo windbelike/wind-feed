@@ -97,12 +97,11 @@ export const threadRouter = createTRPCRouter({
       ctx,
       limit,
       cursor,
+      reverse: true,
       whereClause: {
         parentThreadId: threadId
       }
     })
-
-    result.threads.reverse()
     return result
   }),
   replyThread: protectedProcedure.input(
@@ -263,18 +262,22 @@ async function getInfiniteThreads({
   ctx,
   limit,
   cursor,
+  reverse = false
 }: {
   whereClause?: Prisma.ThreadWhereInput;
   limit: number;
   cursor: { id: string; createdAt: Date } | undefined;
   ctx: inferAsyncReturnType<typeof createTRPCContext>;
+  reverse?: boolean
 }) {
   const currUserId = ctx.session?.user.id
   const data = await ctx.prisma.thread.findMany({
     take: limit + 1,
     cursor: cursor ? { createdAt_id: cursor } : undefined,
     where: whereClause,
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: reverse
+      ? [{ createdAt: "asc" }, { id: "asc" }]
+      : [{ createdAt: "desc" }, { id: "desc" }],
     select: {
       id: true,
       content: true,
