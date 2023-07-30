@@ -12,13 +12,13 @@ import {
 export const threadRouter = createTRPCRouter({
   delete: protectedProcedure.input(
     z.object(
-      { threadId: z.string()}
+      { threadId: z.string() }
     )
   ).mutation(async opt => {
     const ctx = opt.ctx
     const { threadId } = opt.input
     const thread = await ctx.prisma.thread.findFirst({
-      where: { id: threadId},
+      where: { id: threadId },
       select: {
         userId: true
       }
@@ -27,8 +27,11 @@ export const threadRouter = createTRPCRouter({
       return
     }
 
-    const deleteResult = await ctx.prisma.thread.delete({
-      where: { id: threadId}
+    const deleteResult = await ctx.prisma.thread.update({
+      where: { id: threadId },
+      data: {
+        status: 1
+      }
     })
 
     return deleteResult
@@ -72,7 +75,8 @@ export const threadRouter = createTRPCRouter({
           }
         },
         where: {
-          childrenThread: { some: { id: parentThread.id } }
+          childrenThread: { some: { id: parentThread.id } },
+          status: 0
         },
       })
       // console.log("parent item:", parentThread)
@@ -122,7 +126,8 @@ export const threadRouter = createTRPCRouter({
       cursor,
       reverse: true,
       whereClause: {
-        parentThreadId: threadId
+        parentThreadId: threadId,
+        status: 0
       }
     })
     return result
@@ -178,7 +183,8 @@ export const threadRouter = createTRPCRouter({
         }
       },
       where: {
-        id: threadId
+        id: threadId,
+        status: 0
       }
     })
 
@@ -217,7 +223,8 @@ export const threadRouter = createTRPCRouter({
       limit,
       cursor,
       whereClause: {
-        userId
+        userId,
+        status: 0
       }
     })
   })
@@ -232,8 +239,9 @@ export const threadRouter = createTRPCRouter({
     const currUserId = ctx.session?.user.id
     // find following user's threads
     const whereClause = currUserId == null || !onlyFollowing
-      ? undefined
+      ? { status: 0 }
       : {
+        status: 0,
         user: {
           followers: { some: { id: currUserId } }
         }

@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
@@ -32,7 +33,9 @@ export default function() {
   // scroll main thread into viewport
   useEffect(() => {
     const isFirstRenderParentThread = infiniteParentFeed.data?.pages.length == 1
-    if (isFirstRenderParentThread && infiniteParentFeed.data?.pages[0]?.threads.length != 0) {
+    if (data != null
+      && isFirstRenderParentThread
+      && infiniteParentFeed.data?.pages[0]?.threads.length != 0) {
       // get header's height
       var headerOffset = document.getElementById("threadHead")!.scrollHeight;
       // get top offset to viewport
@@ -161,7 +164,7 @@ function ThreadDetailCard({
             <IconHoverEffect>
               <VscEllipsis className="w-6 h-6" />
             </IconHoverEffect>
-            {openMenu && <ThreadMenu id={id} />}
+            {openMenu && <ThreadMenu id={id} user={user} />}
           </div>
         </div>
         <p className="whitespace-pre-wrap">
@@ -179,8 +182,17 @@ function ThreadDetailCard({
   )
 }
 
-function ThreadMenu({ id }: { id: string }) {
+
+type ThreadMenuProps = {
+  user?: { id: string, image: string | null, name: string | null }
+  id: string
+}
+
+function ThreadMenu({ id, user }: ThreadMenuProps) {
   const deleteMutation = api.thread.delete.useMutation()
+  const me = useSession()
+  const disableDeleteButton = user == null || me.data?.user.id != user.id
+
   function onClickDelete() {
     if (id != null) {
       deleteMutation.mutate({ threadId: id }, {
@@ -193,11 +205,11 @@ function ThreadMenu({ id }: { id: string }) {
   return (
     <div className="w-32 shadow-2xl bg-white absolute z-50 rounded-2xl
     translate-x-[-75%]">
-      <div onClick={onClickDelete} className="p-3 flex gap-3 text-red-500 font-bold
-      hover:bg-gray-200 hover:cursor-pointer rounded-2xl">
+      <button disabled={disableDeleteButton} onClick={onClickDelete} className="p-3 flex gap-3 text-red-500 font-bold
+      hover:bg-gray-200 rounded-2xl">
         <VscTrash className="w-6 h-6" />
         Delete
-      </div>
+      </button>
     </div>
   )
 }
