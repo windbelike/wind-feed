@@ -8,7 +8,7 @@ import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
 import { useRouter } from "next/router"
 import ThreadMenu from "./ThreadMenu"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 
 export type ThreadProps = {
@@ -132,6 +132,7 @@ function ThreadCard({
   : ThreadProps) {
   const [openMenu, setOpenMenu] = useState(false)
   const trpcUtils = api.useContext();
+  const threadCardRef = useRef<HTMLLIElement>(null);
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
       toast.success("Liked")
@@ -228,7 +229,7 @@ function ThreadCard({
   const router = useRouter()
   // fixme: event bubbling is not working
   function handleClickThread(e: any) {
-    if (document.getElementById("threadCardId")?.contains(e.target)) {
+    if (threadCardRef.current != null && threadCardRef.current.contains(e.target)) {
       router.push(`/thread/${id}`)
     }
   }
@@ -239,7 +240,7 @@ function ThreadCard({
 
   // todo click the blank, jump to thread detail
   return (
-    <li id="threadCardId" onClick={handleClickThread} className={`flex gap-4
+    <li ref={threadCardRef} onClick={handleClickThread} className={`flex gap-4
     ${childThreadId == null ? 'border-b' : ''} px-4 pt-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
         duration-200`}>
