@@ -249,7 +249,7 @@ function ThreadCard({
         <Link href={`/profile/${user.id}`} onClick={e => e.stopPropagation()}>
           <ProfileImg src={user.image} />
         </Link>
-        {childThreadId && <p className="text-2xl text-gray-400">|</p>}
+        {childThreadId && <p className="text-2xl text-gray-400 flex-grow">|</p>}
       </div>
       <div className="flex-grow">
         <div className="flex flex-grow gap-2 ">
