@@ -7,9 +7,9 @@ import { VscHeartFilled, VscHeart, VscComment, VscEllipsis } from "react-icons/v
 import IconHoverEffect from "./IconHoverEffect"
 import LoadingSpinner from "./LoadingSpinner"
 import { useRouter } from "next/router"
-import ThreadMenu from "./ThreadMenu"
 import { useRef, useState } from "react"
 import { toast } from "react-hot-toast"
+import ThreadDropdownMenu from "./ThreadDropdownMenu"
 
 export type ThreadProps = {
   id: string
@@ -235,8 +235,8 @@ function ThreadCard({
   }
 
   function onClickMenu(e: React.MouseEvent<HTMLElement>) {
-    e.stopPropagation()
-    setOpenMenu(!openMenu)
+    // e.stopPropagation()
+    // setOpenMenu(!openMenu)
   }
 
   // todo click the blank, jump to thread detail
@@ -259,10 +259,7 @@ function ThreadCard({
           <span className="text-gray-500">-</span>
           <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
           <div onClick={onClickMenu} className="relative ml-auto select-none" >
-            <IconHoverEffect>
-              <VscEllipsis className="w-6 h-6" />
-            </IconHoverEffect>
-            {openMenu && <ThreadMenu id={id} user={user} />}
+            <ThreadDropdownMenu id={id} user={user}/>
           </div>
         </div>
         <p className="whitespace-pre-wrap">

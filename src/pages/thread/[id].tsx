@@ -1,5 +1,5 @@
-import { useSession } from "next-auth/react"
-import * as Popover from '@radix-ui/react-popover';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
@@ -10,7 +10,7 @@ import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeForm
 import LoadingSpinner from "~/components/LoadingSpinner"
 import NewThreadForm from "~/components/NewThreadForm"
 import ProfileImg from "~/components/ProfileImg"
-import ThreadMenu from "~/components/ThreadMenu"
+import ThreadDropdownMenu from '~/components/ThreadDropdownMenu';
 import { api } from "~/utils/api"
 
 export default function() {
@@ -133,7 +133,6 @@ function ThreadDetailCard({
 }: ThreadProps) {
   const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
   const trpcUtils = api.useContext();
-  const [openMenu, setOpenMenu] = useState(false)
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {
       toast.success("Liked")
@@ -146,10 +145,6 @@ function ThreadDetailCard({
   }
 
   const buttonSizeClasses = 'w-6 h-6'
-
-  function onClickMenu(e: React.MouseEvent<HTMLElement>) {
-    setOpenMenu(!openMenu)
-  }
 
   return (
     <li className="flex gap-4 px-4 py-2 hover:bg-gray-100
@@ -164,11 +159,8 @@ function ThreadDetailCard({
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
-          <div onClick={onClickMenu} className="relative ml-auto select-none" >
-            <IconHoverEffect>
-              <VscEllipsis className="w-6 h-6" />
-            </IconHoverEffect>
-            {openMenu && <ThreadMenu id={id} user={user} />}
+          <div className="relative ml-auto select-none" >
+            <ThreadDropdownMenu id={id} user={user} />
           </div>
         </div>
         <p className="whitespace-pre-wrap">
@@ -185,4 +177,3 @@ function ThreadDetailCard({
     </li>
   )
 }
-
