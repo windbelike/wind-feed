@@ -46,19 +46,26 @@ function ThreadMenu({ id, user }: ThreadDropdownMenuProps) {
     }
   }
   return (
-    <div className="shadow-2xl bg-white absolute z-50 rounded-2xl
-    translate-x-[-75%]">
-      {showDeleteButton && <button onClick={onClickDelete}
-        className="py-2 px-4 flex-grow flex gap-3 text-red-500 font-bold
+    <DropdownMenu.Group asChild>
+      <div className="shadow-2xl w-36
+    bg-white absolute z-50 rounded-2xl
+    translate-x-[-80%]">
+        <DropdownMenu.Item className="outline-none" asChild>
+          {showDeleteButton && <button onClick={onClickDelete}
+            className="w-full py-2 px-4 flex gap-3 text-red-500 font-bold
       hover:bg-gray-200 rounded-2xl">
-        <VscTrash className="w-6 h-6" />
-        Delete
-      </button>
-      }
-      <button className="py-2 px-4 flex-grow flex gap-3 font-bold
+            <VscTrash className="w-6 h-6" />
+            Delete
+          </button>
+          }
+        </DropdownMenu.Item>
+        <DropdownMenu.Item className="outline-none" asChild>
+          <button className="w-full py-2 px-4 flex gap-3 font-bold
       hover:bg-gray-200 rounded-2xl">
-        <VscSync className="w-6 h-6"/> tbd
-      </button>
-    </div>
+            <VscSync className="w-6 h-6" /> tbd
+          </button>
+        </DropdownMenu.Item>
+      </div>
+    </DropdownMenu.Group>
   )
 }
