@@ -234,12 +234,6 @@ function ThreadCard({
     }
   }
 
-  function onClickMenu(e: React.MouseEvent<HTMLElement>) {
-    // e.stopPropagation()
-    // setOpenMenu(!openMenu)
-  }
-
-  // todo click the blank, jump to thread detail
   return (
     <li ref={threadCardRef} onClick={handleClickThread} className={`flex gap-4
     ${childThreadId == null ? 'border-b' : ''} px-4 pt-2 hover:bg-gray-100
@@ -258,7 +252,7 @@ function ThreadCard({
           ">{user.name}</Link>
           <span className="text-gray-500">-</span>
           <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
-          <div onClick={onClickMenu} className="relative ml-auto select-none" >
+          <div className="relative ml-auto select-none" >
             <ThreadDropdownMenu id={id} user={user}/>
           </div>
         </div>

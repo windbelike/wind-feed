@@ -27,7 +27,6 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   }, [threadInput])
 
   // reply thread
-  // todo update feeds after a reply
   const replyThread = api.thread.replyThread.useMutation({
     onSuccess: newReply => {
       toast.success("Reply Created")
