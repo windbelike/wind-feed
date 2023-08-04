@@ -88,9 +88,10 @@ model User {
     sessions      Session[]
 
     // non next auth
-    threads       Thread[]
-    likes         Like[]
-    notifications Notification[]
+    hasNotification Boolean?
+    threads         Thread[]
+    likes           Like[]
+    notifications   Notification[]
 
     // many-to-many self relation (implicit creating a middle relation table named _Followers)
     followers User[] @relation(name: "Followers")
