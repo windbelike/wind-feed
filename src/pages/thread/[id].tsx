@@ -1,5 +1,3 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
