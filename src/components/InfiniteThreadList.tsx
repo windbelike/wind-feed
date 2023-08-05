@@ -222,12 +222,12 @@ function ThreadCard({
       }
     }
   })
-  function handleToggleLike() {
+  function handleToggleLike(e: any) {
+    e.stopPropagation()
     toggleLike.mutate({ id })
   }
 
   const router = useRouter()
-  // fixme: event bubbling is not working
   function handleClickThread(e: any) {
     if (threadCardRef.current != null && threadCardRef.current.contains(e.target)) {
       router.push(`/thread/${id}`)
