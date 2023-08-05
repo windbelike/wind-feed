@@ -133,7 +133,8 @@ function ThreadDetailCard({
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {
-      toast.success("Liked")
+      const msg = data.addedLike ? "Liked" : "Unliked"
+      toast.success(msg)
       trpcUtils.thread.threadDetail.invalidate()
     }
   })

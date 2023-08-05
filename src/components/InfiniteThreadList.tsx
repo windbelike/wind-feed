@@ -253,7 +253,7 @@ function ThreadCard({
           <span className="text-gray-500">-</span>
           <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
           <div className="relative ml-auto select-none" >
-            <ThreadDropdownMenu id={id} user={user}/>
+            <ThreadDropdownMenu id={id} user={user} />
           </div>
         </div>
         <p className="whitespace-pre-wrap">
@@ -262,7 +262,7 @@ function ThreadCard({
         <div className="flex justify-start gap-6">
           <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
-          <ReplyButton onClick={() => null} replyCount={replyCount} />
+          <ReplyButton onClick={e => void e.stopPropagation()} replyCount={replyCount} />
         </div>
       </div>
     </li>
@@ -278,7 +278,7 @@ type HeartButtonProps = {
 }
 
 type ReplyButtonProps = {
-  onClick: () => void
+  onClick: (e?: any) => void
   replyCount: number
   className?: string
 }
