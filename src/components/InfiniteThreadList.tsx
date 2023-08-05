@@ -130,12 +130,12 @@ function ThreadCard({
   childThreadId
 }
   : ThreadProps) {
-  const [openMenu, setOpenMenu] = useState(false)
   const trpcUtils = api.useContext();
   const threadCardRef = useRef<HTMLLIElement>(null);
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async (data) => {
-      toast.success("Liked")
+      const msg = data.addedLike ? "Liked" : "Unliked"
+      toast.success(msg)
       // mutate the updated liked thread data in cache 
       const updateLikeFn: Parameters<
         typeof trpcUtils.thread.infiniteFeed.setInfiniteData
