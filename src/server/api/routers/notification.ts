@@ -19,6 +19,10 @@ export const notificationRouter = createTRPCRouter({
       },
       orderBy: {
         createdAt: "desc"
+      },
+      select: {
+        body: true,
+        createdAt: true
       }
     })
 

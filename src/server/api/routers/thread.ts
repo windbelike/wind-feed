@@ -145,7 +145,7 @@ export const threadRouter = createTRPCRouter({
       return
     }
     const parentThread = await ctx.prisma.thread.findUnique({
-      where: { id: threadId},
+      where: { id: threadId },
       select: {
         userId: true
       }
@@ -164,13 +164,13 @@ export const threadRouter = createTRPCRouter({
       }
     })
 
-
+    const username = opt.ctx.session.user.name
     if (replyResult != null) {
       pushNotification({
         ctx: opt.ctx,
         sender: opt.ctx.session.user.id,
         receiver: parentThread.userId,
-        body: "Someone replied your thread."
+        body: username + " replied your thread."
       })
     }
 
@@ -302,12 +302,13 @@ export const threadRouter = createTRPCRouter({
             userId: true
           }
         })
+        const username = opt.ctx.session.user.name
         if (thread != null) {
           pushNotification({
             ctx: opt.ctx,
             sender: opt.ctx.session.user.id,
             receiver: thread.userId,
-            body: "Someone liked your thread."
+            body: username + " liked your thread."
           })
         }
         return { addedLike: true }

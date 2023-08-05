@@ -111,6 +111,8 @@ model Notification {
     body      String
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    type      Int?
+    refId     String?  
     createdAt DateTime @default(now())
 
     @@index([userId])
