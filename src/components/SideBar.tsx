@@ -1,11 +1,14 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import IconHoverEffect from "./IconHoverEffect"
-import { VscAccount, VscHome, VscSignIn, VscSignOut } from "react-icons/vsc"
+import { VscAccount, VscBell, VscBellDot, VscHome, VscSignIn, VscSignOut } from "react-icons/vsc"
+import { api } from "~/utils/api"
 
 export default function SideBar() {
   const session = useSession()
   const user = session.data?.user
+  const { data } = api.notification.hasNotification.useQuery()
+  const NotifyIcon = data?.hasNotification ? VscBellDot : VscBell
 
   return (
     <nav className="px-1 py-6">
@@ -27,6 +30,19 @@ export default function SideBar() {
                 <div className="flex items-center gap-3">
                   <VscAccount className="h-8 w-8" />
                   <span className="hidden text-lg md:inline">Profile</span>
+                </div>
+              </IconHoverEffect>
+            </Link>
+          </li>
+        }
+
+        {user != null &&
+          <li>
+            <Link href={`/notifications`}>
+              <IconHoverEffect>
+                <div className="flex items-center gap-3">
+                  <NotifyIcon className="h-8 w-8" />
+                  <span className="hidden text-lg md:inline">Notifications</span>
                 </div>
               </IconHoverEffect>
             </Link>

@@ -32,6 +32,21 @@ export const notificationRouter = createTRPCRouter({
     })
 
     return notifications
+  }),
+  hasNotification: protectedProcedure.query(async opt => {
+    const ctx = opt.ctx
+    const userId = ctx.session?.user.id
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: { hasNotification: true }
+    })
+    if (user != null) {
+      return { hasNotification: user.hasNotification }
+    } else {
+      return { hasNotification: false}
+    }
   })
 })
 
