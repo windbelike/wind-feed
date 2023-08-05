@@ -70,7 +70,7 @@ export async function pushNotification({
     return
   }
   try {
-    await ctx.prisma.notification.create({
+    const note = await ctx.prisma.notification.create({
       data: {
         userId: receiver,
         body,
@@ -85,6 +85,7 @@ export async function pushNotification({
         hasNotification: true
       }
     })
+    console.log("notification created:", JSON.stringify(note))
   } catch (e) {
     console.log(e)
   }

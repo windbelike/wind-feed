@@ -2,7 +2,11 @@ import { api } from "~/utils/api"
 
 export default function Notifications() {
   const { data } = api.notification.getNotifications.useQuery()
-  console.log(JSON.stringify(data))
+  const trpcUtils = api.useContext();
+  if (data) {
+    trpcUtils.notification.hasNotification.invalidate()
+  }
+
   return (
     <>
       <header className="z-10 bg-white sticky top-0 border-b pt-2">
