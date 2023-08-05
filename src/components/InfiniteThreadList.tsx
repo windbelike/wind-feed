@@ -271,7 +271,7 @@ function ThreadCard({
 
 type HeartButtonProps = {
   isLoading: boolean
-  onClick: () => void
+  onClick: (e?: any) => void
   likedByMe: boolean
   likeCount: number
   className?: string
