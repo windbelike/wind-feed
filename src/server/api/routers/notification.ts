@@ -22,7 +22,8 @@ export const notificationRouter = createTRPCRouter({
       },
       select: {
         body: true,
-        createdAt: true
+        createdAt: true,
+        id: true
       }
     })
 

@@ -12,7 +12,7 @@ export default function Notifications() {
       </header>
       <main>
         {data && data.map(d => {
-          return <div className="p-6 text-xl border-b-gray-200 border-b">{d.body}</div>
+          return <div key={d.id} className="p-6 text-xl border-b-gray-200 border-b">{d.body}</div>
         })}
       </main>
     </>
