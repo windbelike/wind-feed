@@ -8,6 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { pushNotification } from "./notification";
 
 export const threadRouter = createTRPCRouter({
   delete: protectedProcedure.input(
@@ -143,6 +144,16 @@ export const threadRouter = createTRPCRouter({
     if (content.trim() == '') {
       return
     }
+    const parentThread = await ctx.prisma.thread.findUnique({
+      where: { id: threadId},
+      select: {
+        userId: true
+      }
+    })
+
+    if (parentThread == null) {
+      return
+    }
 
     const replyResult = ctx.prisma.thread.create({
       data: {
@@ -153,7 +164,15 @@ export const threadRouter = createTRPCRouter({
       }
     })
 
-    console.log("replyResult:", JSON.stringify(replyResult))
+
+    if (replyResult != null) {
+      pushNotification({
+        ctx: opt.ctx,
+        sender: opt.ctx.session.user.id,
+        receiver: parentThread.userId,
+        body: "Someone replied your thread."
+      })
+    }
 
     return replyResult
   }),
@@ -277,6 +296,20 @@ export const threadRouter = createTRPCRouter({
       })
       if (existingLike == null) {
         await opt.ctx.prisma.like.create({ data })
+        const thread = await opt.ctx.prisma.thread.findUnique({
+          where: { id: opt.input.id },
+          select: {
+            userId: true
+          }
+        })
+        if (thread != null) {
+          pushNotification({
+            ctx: opt.ctx,
+            sender: opt.ctx.session.user.id,
+            receiver: thread.userId,
+            body: "Someone liked your thread."
+          })
+        }
         return { addedLike: true }
       } else {
         await opt.ctx.prisma.like.delete({
