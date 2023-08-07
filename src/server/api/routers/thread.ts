@@ -284,6 +284,7 @@ export const threadRouter = createTRPCRouter({
           userId: ctx.session.user.id
         }
       })
+      ctx.revalidateSSG?.(`/profile/${ctx.session.user.id}`)
 
       return createThreadResult
     }),

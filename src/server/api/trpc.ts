@@ -25,6 +25,9 @@ import { prisma } from "~/server/db";
 
 interface CreateContextOptions {
   session: Session | null;
+  revalidateSSG: ((urlPath: string, opts?: {
+    unstable_onlyGenerated?: boolean;
+  }) => Promise<void>) | null;
 }
 
 /**
@@ -40,6 +43,7 @@ interface CreateContextOptions {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
+    revalidateSSG: opts.revalidateSSG,
     prisma,
   };
 };
@@ -58,6 +62,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    revalidateSSG: res.revalidate
   });
 };
 
