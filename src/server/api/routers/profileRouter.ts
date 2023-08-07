@@ -5,6 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { pushNotification } from "./notification";
 
 export const profileRouter = createTRPCRouter({
   getById: publicProcedure
@@ -61,6 +62,13 @@ export const profileRouter = createTRPCRouter({
           data: { followers: { connect: { id: currentUserId } } },
         });
         addedFollow = true;
+
+        pushNotification({
+          ctx: ctx,
+          sender: ctx.session.user.id,
+          receiver: userId,
+          body: ctx.session.user.name + " followed you."
+        })
       } else {
         await ctx.prisma.user.update({
           where: { id: userId },
