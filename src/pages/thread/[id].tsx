@@ -59,7 +59,7 @@ export default function() {
   }, [threadId, infiniteParentFeed.data?.pages.length])
 
   if (threadId == null) {
-    return <div className="flex justify-center font-bold text-2xl">
+    return <div className="flex justify-center p-6 font-bold text-2xl">
       No such thread</div>
   }
 
@@ -91,6 +91,10 @@ export default function() {
         </h1>
       </header>
       <main >
+        {data == null &&
+          <div className="flex justify-center p-6 font-bold text-2xl">
+            No such thread</div>
+        }
         <InfiniteThreadList
           threads={infiniteParentFeed.data?.pages.flatMap(page => page.threads)}
           isError={infiniteParentFeed.isError}
@@ -102,7 +106,7 @@ export default function() {
         <div className={makeScrollBarCalssName}>
           <div id="threadDetail">
             {data && <ThreadDetailCard {...data.thread} hasParent={hasParent} />}
-            <NewThreadForm replyThreadId={threadId} isReply={true} />
+            {data && < NewThreadForm replyThreadId={threadId} isReply={true} />}
           </div>
           <InfiniteThreadList
             threads={infiniteReplyThreads.data?.pages.flatMap(page => page.threads)}

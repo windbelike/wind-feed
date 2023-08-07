@@ -208,7 +208,7 @@ export const threadRouter = createTRPCRouter({
     })
 
     if (thread == null) {
-      return
+      return null
     }
 
     const result = {
