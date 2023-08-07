@@ -138,8 +138,7 @@ function ThreadCard({
       toast.success(msg)
       // mutate the updated liked thread data in cache 
       const updateLikeFn: Parameters<
-        typeof trpcUtils.thread.infiniteFeed.setInfiniteData
-      >[1] = (oldData) => {
+        typeof trpcUtils.thread.infiniteFeed.setInfiniteData>[1] = (oldData) => {
         if (oldData == null) {
           return
         }
@@ -222,8 +221,8 @@ function ThreadCard({
       }
     }
   })
-  function handleToggleLike(e: any) {
-    e.stopPropagation()
+
+  function handleToggleLike() {
     toggleLike.mutate({ id })
   }
 
@@ -259,10 +258,10 @@ function ThreadCard({
         <p className="whitespace-pre-wrap">
           {content}
         </p>
-        <div className="flex justify-start gap-6">
+        <div className="flex justify-start gap-6" onClick={e => e.stopPropagation()}>
           <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
-          <ReplyButton onClick={e => void e.stopPropagation()} replyCount={replyCount} />
+          <ReplyButton replyCount={replyCount} />
         </div>
       </div>
     </li>
@@ -278,7 +277,7 @@ type HeartButtonProps = {
 }
 
 type ReplyButtonProps = {
-  onClick: (e?: any) => void
+  onClick?: (e?: any) => void
   replyCount: number
   className?: string
 }
