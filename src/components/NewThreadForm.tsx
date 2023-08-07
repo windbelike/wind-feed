@@ -40,7 +40,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
         return
       }
 
-      trpcUtils.thread.infiniteReplyFeed.setInfiniteData({threadId: replyThreadId!}, (oldData) => {
+      trpcUtils.thread.infiniteReplyFeed.setInfiniteData({ threadId: replyThreadId! }, (oldData) => {
         if (oldData == null || oldData.pages[0] == null) {
           return
         }
@@ -138,8 +138,14 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
     }
   }
 
-  const buttonDisabled = replyThread.isLoading || createThread.isLoading
-  const placeholderTxt = isReply? "Send your reply ~" : "What's happening?"
+  const placeholderTxt = isReply ? "Send your reply ~" : "What's happening?"
+  const maxContentLen = 100
+  const currentContentLen = threadInput.length
+  const contentLenValid = currentContentLen <= maxContentLen
+  const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
+  const buttonDisabled = replyThread.isLoading
+    || createThread.isLoading
+    || !contentLenValid
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col px-4 py-2 border-b">
@@ -150,9 +156,12 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
           rounded-lg h-24
           max-h-96 overflow-y-auto
        text-lg p-4
-      " placeholder={placeholderTxt}/>
+      " placeholder={placeholderTxt} />
       </div>
-      <Button disabled={buttonDisabled} className="self-end my-2">{isReply ? "Reply" : "New Thread"}</Button>
+      <div className="self-end my-2">
+        <span className={`mx-4 ${contentLenColor} select-none`}>{currentContentLen} / {maxContentLen}</span>
+        <Button disabled={buttonDisabled} className="">{isReply ? "Reply" : "Send"}</Button>
+      </div>
     </form>
   )
 }
