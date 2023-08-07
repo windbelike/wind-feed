@@ -30,10 +30,10 @@ type NoteCardProps = {
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 function NoteCard({ body = "", className = "", ...props }: NoteCardProps) {
-  const baseClass = "flex p-6 text-xl border-b-gray-200 border-b"
   return (
-    <div className={`${baseClass} ${className}`} {...props}>
-      <VscSparkle className="w-7 h-7"/>
+    <div className={`flex gap-x-3 p-6 text-xl border-b-gray-200 border-b 
+      ${className}`} {...props}>
+      <VscSparkle className="w-7 h-7" />
       <span>{body}</span>
     </div>
   )
