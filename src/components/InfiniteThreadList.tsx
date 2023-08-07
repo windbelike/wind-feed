@@ -222,7 +222,8 @@ function ThreadCard({
     }
   })
 
-  function handleToggleLike() {
+  function handleToggleLike(e: any) {
+    e.stopPropagation()
     toggleLike.mutate({ id })
   }
 
@@ -258,10 +259,10 @@ function ThreadCard({
         <p className="whitespace-pre-wrap">
           {content}
         </p>
-        <div className="flex justify-start gap-6" onClick={e => e.stopPropagation()}>
-          <HeartButton onClick={handleToggleLike}
+        <div className="flex justify-start gap-6">
+        <HeartButton onClick={e => handleToggleLike(e)}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
-          <ReplyButton replyCount={replyCount} />
+            <ReplyButton replyCount={replyCount} onClick={e => e.stopPropagation()}/>
         </div>
       </div>
     </li>
