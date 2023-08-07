@@ -1,3 +1,4 @@
+import { VscSparkle } from "react-icons/vsc";
 import { api } from "~/utils/api"
 
 export default function Notifications() {
@@ -16,9 +17,24 @@ export default function Notifications() {
       </header>
       <main>
         {data && data.map(d => {
-          return <div key={d.id} className="p-6 text-xl border-b-gray-200 border-b">{d.body}</div>
+          return <NoteCard key={d.id} className="" body={d.body} />
         })}
       </main>
     </>
+  )
+}
+
+type NoteCardProps = {
+  body: string
+  className?: string
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+function NoteCard({ body = "", className = "", ...props }: NoteCardProps) {
+  const baseClass = "p-6 text-xl border-b-gray-200 border-b"
+  return (
+    <div className={`${baseClass} ${className}`} {...props}>
+      <VscSparkle className="w-4 h-4"/>
+      <span>{body}</span>
+    </div>
   )
 }
