@@ -165,7 +165,7 @@ function ThreadDetailCard({
         <p className="whitespace-pre-wrap">
           {content}
         </p>
-        <div className="hover:underline mt-8 text-gray-500">{dateTimeFormatter.format(createdAt)}</div>
+        <div className="hover:underline mt-8 text-gray-500">{createdAt.toLocaleString()}</div>
         <div className="flex justify-start items-center gap-9 border-b mt-4 border-gray-200 m-2 flex-grow">
           <HeartButton className={buttonSizeClasses} onClick={handleToggleLike}
             isLoading={toggleLike.isLoading}
