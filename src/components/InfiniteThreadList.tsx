@@ -139,32 +139,32 @@ function ThreadCard({
       // mutate the updated liked thread data in cache 
       const updateLikeFn: Parameters<
         typeof trpcUtils.thread.infiniteFeed.setInfiniteData>[1] = (oldData) => {
-        if (oldData == null) {
-          return
-        }
-        const countModifier = data.addedLike ? 1 : -1;
+          if (oldData == null) {
+            return
+          }
+          const countModifier = data.addedLike ? 1 : -1;
 
-        return {
-          ...oldData,
-          pages: oldData.pages.map(page => {
-            return {
-              ...page,
-              threads:
-                page.threads.map(thread => {
-                  if (thread.id == id) {
-                    return {
-                      ...thread,
-                      likeCount: thread.likeCount + countModifier,
-                      likedByMe: data.addedLike
+          return {
+            ...oldData,
+            pages: oldData.pages.map(page => {
+              return {
+                ...page,
+                threads:
+                  page.threads.map(thread => {
+                    if (thread.id == id) {
+                      return {
+                        ...thread,
+                        likeCount: thread.likeCount + countModifier,
+                        likedByMe: data.addedLike
+                      }
                     }
-                  }
 
-                  return thread
-                })
-            }
-          })
+                    return thread
+                  })
+              }
+            })
+          }
         }
-      }
 
       // update home page recent feed
       trpcUtils.thread.infiniteFeed.setInfiniteData({}, updateLikeFn);
@@ -222,8 +222,7 @@ function ThreadCard({
     }
   })
 
-  function handleToggleLike(e: any) {
-    e.stopPropagation()
+  function handleToggleLike() {
     toggleLike.mutate({ id })
   }
 
@@ -259,10 +258,10 @@ function ThreadCard({
         <p className="whitespace-pre-wrap">
           {content}
         </p>
-        <div className="flex justify-start gap-6">
-        <HeartButton onClick={e => handleToggleLike(e)}
+        <div className="flex justify-start gap-6 w-0" onClick={e => e.stopPropagation()}>
+          <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
-            <ReplyButton replyCount={replyCount} onClick={e => e.stopPropagation()}/>
+          <ReplyButton replyCount={replyCount} />
         </div>
       </div>
     </li>
