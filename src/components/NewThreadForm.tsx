@@ -139,7 +139,7 @@ export default function NewThreadForm({ isReply = false, replyThreadId }: NewThr
   }
 
   const placeholderTxt = isReply ? "Send your reply ~" : "What's happening?"
-  const maxContentLen = 100
+  const maxContentLen = 180
   const currentContentLen = threadInput.length
   const contentLenValid = currentContentLen <= maxContentLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
