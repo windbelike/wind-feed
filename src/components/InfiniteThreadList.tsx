@@ -234,18 +234,20 @@ function ThreadCard({
   }
 
   return (
-    <li ref={threadCardRef} onClick={handleClickThread} className={`flex gap-4
+    <li ref={threadCardRef} onClick={handleClickThread} className={`
+      flex gap-4
     ${childThreadId == null ? 'border-b' : ''} px-4 pt-2 hover:bg-gray-100
         focus-visible:bg-gray-200 cursor-pointer
-        duration-200`}>
+        duration-200`
+    }>
       <div className="flex flex-col items-center">
         <Link href={`/profile/${user.id}`} onClick={e => e.stopPropagation()}>
           <ProfileImg src={user.image} />
         </Link>
         {childThreadId && <div className="bg-gray-400 w-[2px] h-full"></div>}
       </div>
-      <div className="flex-grow">
-        <div className="flex flex-grow gap-2 ">
+      <div className="flex-grow min-w-0">
+        <div className="flex flex-grow gap-2">
           <Link onClick={e => e.stopPropagation()} href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
@@ -255,9 +257,11 @@ function ThreadCard({
             <ThreadDropdownMenu id={id} user={user} />
           </div>
         </div>
-        <p className="whitespace-pre-wrap">
-          {content}
-        </p>
+        <div className=''>
+          <p className=" whitespace-pre-wrap break-words">
+            {content}
+          </p>
+        </div>
         <div className="flex justify-start gap-6 w-0" onClick={e => e.stopPropagation()}>
           <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />

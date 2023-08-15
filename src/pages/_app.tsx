@@ -1,5 +1,5 @@
 import { type Session } from "next-auth";
-import { SessionProvider  } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
@@ -18,11 +18,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
           Wind Thread
         </title>
       </Head>
-      <div className="container flex justify-center">
-        <SideBar />
-        <div className="max-w-2xl min-h-screen border-x flex-grow ">
-          <Component {...pageProps} />
-          <Toaster />
+      <div className="container mx-auto">
+      <div className="flex lg:justify-center">
+          <SideBar />
+          <div className="max-w-2xl min-h-screen min-w-0
+        border-x flex-grow ">
+            <Component {...pageProps} />
+            <Toaster />
+          </div>
         </div>
       </div>
     </SessionProvider>
