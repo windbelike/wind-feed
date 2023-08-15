@@ -247,7 +247,7 @@ function ThreadCard({
         {childThreadId && <div className="bg-gray-400 w-[2px] h-full"></div>}
       </div>
       <div className="flex-grow min-w-0">
-        <div className="flex flex-grow gap-2">
+        <div className="flex gap-2">
           <Link onClick={e => e.stopPropagation()} href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
@@ -257,11 +257,9 @@ function ThreadCard({
             <ThreadDropdownMenu id={id} user={user} />
           </div>
         </div>
-        <div className=''>
-          <p className=" whitespace-pre-wrap break-words">
-            {content}
-          </p>
-        </div>
+        <p className=" whitespace-pre-wrap break-words">
+          {content}
+        </p>
         <div className="flex justify-start gap-6 w-0" onClick={e => e.stopPropagation()}>
           <HeartButton onClick={handleToggleLike}
             isLoading={toggleLike.isLoading} likedByMe={likedByMe} likeCount={likeCount} />
