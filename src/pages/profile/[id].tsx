@@ -52,7 +52,7 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
         <title>{`Wind Thread - ${data.name}`}</title>
       </Head>
       <header className="sticky top-0 flex flex-col items-start border-b bg-white
-      z-10 px-4 py-2">
+      z-10 px-4 py-2 bg-white/50 backdrop-blur-lg">
         <div className="flex items-center w-full">
         <div onClick={() => router.back()} className="mr-2 hover:cursor-pointer">
             <IconHoverEffect>
