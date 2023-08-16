@@ -79,7 +79,8 @@ export default function() {
 
   return (
     <>
-      <header id="threadHead" className="sticky top-0 flex items-center border-b bg-white z-10
+    <header id="threadHead" className="backdrop-blur-lg
+      sticky top-0 flex items-center border-b bg-white/50 z-10
       px-4 py-2">
         <div onClick={() => router.back()} className="
       hover:cursor-pointer mr-2">
