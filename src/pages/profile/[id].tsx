@@ -54,7 +54,7 @@ export default function(props: InferGetServerSidePropsType<typeof getStaticProps
       <header className="sticky top-0 flex flex-col items-start border-b bg-white
       z-10 px-4 py-2">
         <div className="flex items-center w-full">
-          <div onClick={() => router.back()} className="mr-2">
+        <div onClick={() => router.back()} className="mr-2 hover:cursor-pointer">
             <IconHoverEffect>
               <VscArrowLeft className="w-6 h-6" />
             </IconHoverEffect>

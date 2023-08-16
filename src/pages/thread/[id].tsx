@@ -81,7 +81,8 @@ export default function() {
     <>
       <header id="threadHead" className="sticky top-0 flex items-center border-b bg-white z-10
       px-4 py-2">
-        <div onClick={() => router.back()} className="mr-2">
+        <div onClick={() => router.back()} className="
+      hover:cursor-pointer mr-2">
           <IconHoverEffect>
             <VscArrowLeft className="w-6 h-6" />
           </IconHoverEffect>
@@ -157,7 +158,7 @@ function ThreadDetailCard({
       <Link href={`/profile/${user.id}`}>
         <ProfileImg src={user.image} />
       </Link>
-      <div className="flex-grow">
+      <div className="flex-grow min-w-0">
         <div className="flex gap-2 ">
           <Link href={`/profile/${user.id}`} className="
             font-bold outline-none hover:underline focus-visible:underline
@@ -166,7 +167,7 @@ function ThreadDetailCard({
             <ThreadDropdownMenu id={id} user={user} />
           </div>
         </div>
-        <p className="whitespace-pre-wrap">
+        <p className="whitespace-pre-wrap break-words">
           {content}
         </p>
         <div className="hover:underline mt-8 text-gray-500">{createdAt.toLocaleString()}</div>
