@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import { VscArrowLeft, VscEllipsis, VscTrash } from "react-icons/vsc"
 import IconHoverEffect from "~/components/IconHoverEffect"
-import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps, dateTimeFormatter } from "~/components/InfiniteThreadList"
+import InfiniteThreadList, { HeartButton, ReplyButton, ThreadProps } from "~/components/InfiniteThreadList"
 import LoadingSpinner from "~/components/LoadingSpinner"
 import NewThreadForm from "~/components/NewThreadForm"
 import ProfileImg from "~/components/ProfileImg"
@@ -135,7 +135,6 @@ function ThreadDetailCard({
   replyCount,
   hasParent
 }: ThreadProps) {
-  const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
   const trpcUtils = api.useContext();
   const toggleLike = api.thread.toggleLike.useMutation({
     onSuccess: async data => {

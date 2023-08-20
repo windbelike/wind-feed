@@ -10,6 +10,8 @@ import { useRouter } from "next/router"
 import { useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import ThreadDropdownMenu from "./ThreadDropdownMenu"
+import { intlFormatDistance } from 'date-fns'
+
 
 export type ThreadProps = {
   id: string
@@ -85,37 +87,6 @@ export default function InfiniteThreadList({
       })}
     </InfiniteScroll>
   </ul>
-}
-
-export const dateTimeFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "full" })
-const formatter = new Intl.RelativeTimeFormat(undefined, {
-  numeric: "auto",
-})
-
-const DIVISIONS = [
-  { amount: 60, name: "seconds" },
-  { amount: 60, name: "minutes" },
-  { amount: 24, name: "hours" },
-  { amount: 7, name: "days" },
-  { amount: 4.34524, name: "weeks" },
-  { amount: 12, name: "months" },
-  { amount: Number.POSITIVE_INFINITY, name: "years" },
-]
-
-function formatTimeAgo(date: Date) {
-  let duration = (date.getTime() - new Date().getTime()) / 1000
-
-  for (let i = 0; i < DIVISIONS.length; i++) {
-    const division = DIVISIONS[i]
-    if (division == null) {
-      continue
-    }
-    if (Math.abs(duration) < division.amount) {
-      // @ts-ignore
-      return formatter.format(Math.round(duration), division.name)
-    }
-    duration /= division.amount
-  }
 }
 
 function ThreadCard({
@@ -252,7 +223,9 @@ function ThreadCard({
             font-bold outline-none hover:underline focus-visible:underline
           ">{user.name}</Link>
           <span className="text-gray-500">-</span>
-          <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
+          <span className="text-gray-500">
+            {intlFormatDistance(createdAt, new Date(), { style: 'short' })}
+          </span>
           <div className="relative ml-auto select-none" >
             <ThreadDropdownMenu id={id} user={user} />
           </div>
