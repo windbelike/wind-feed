@@ -11,8 +11,8 @@ export default function Notifications() {
   return (
     <>
       <header className="z-10 bg-white/50 backdrop-blur-lg
-      sticky top-0 border-b pt-2">
-        <h1 className="mb-2 px-4 font-bold text-lg ">
+      sticky top-0 border-b">
+        <h1 className="p-4 font-bold text-lg ">
           Notifications
         </h1>
       </header>
