@@ -41,7 +41,6 @@ export default function() {
       var headerOffset = document.getElementById("threadHead")!.scrollHeight;
       // get top offset to viewport
       var elementPosition = document.getElementById("threadDetail")!.getBoundingClientRect().top;
-      // padding for top
       const paddingTop = 10
       // scroll to specific offset by pixel
       var offsetPosition = elementPosition - headerOffset - paddingTop
@@ -52,7 +51,6 @@ export default function() {
       });
     }
 
-    // fix: don't scroll to the top when loading the page in mobile phone
     if (infiniteParentFeed.data?.pages.length == 0) {
       window.scrollTo(0, 0)
     }
@@ -71,15 +69,16 @@ export default function() {
     return <LoadingSpinner />
   }
 
-  if (infiniteParentFeed.data != null && infiniteParentFeed.data.pages[0]?.threads.length != 0) {
-    makeScrollBarCalssName = "h-screen"
-  }
 
   const hasParent = infiniteParentFeed.data?.pages[0]?.threads.length != 0
 
+  if (hasParent) {
+    makeScrollBarCalssName = "h-screen"
+  }
+
   return (
     <>
-    <header id="threadHead" className="backdrop-blur-lg
+      <header id="threadHead" className="backdrop-blur-lg
       sticky top-0 flex items-center border-b bg-white/50 z-10
       px-4 py-2">
         <div onClick={() => router.back()} className="
