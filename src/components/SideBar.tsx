@@ -11,8 +11,8 @@ export default function SideBar() {
   const NotifyIcon = data?.hasNotification ? VscBellDot : VscBell
 
   return (
-    <nav className="px-1 py-6">
-      <ul className="sticky top-0 flex flex-col gap-2">
+    <nav className="px-1 py-4">
+      <ul className="sticky top-4 flex flex-col gap-2">
         <li>
           <Link href="/">
             <IconHoverEffect>
